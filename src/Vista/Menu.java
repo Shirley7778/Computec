@@ -11,6 +11,8 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import net.miginfocom.swing.MigLayout;
+import Controlador.AuthController;
+import Modelo.Usuario;
 
 public class Menu extends javax.swing.JPanel {
 
@@ -18,25 +20,38 @@ public class Menu extends javax.swing.JPanel {
 
     public Menu() {
         initComponents();
-       /* lbl_rol.setText(Ctrl_Permiso.getInstanceActual().getRol());*/
         setOpaque(false);
         ScrollBarCustom sb = new ScrollBarCustom();
         sb.setForeground(new Color(130, 130, 130, 100));
         jScrollPane1.setVerticalScrollBar(sb);
         panelMenu.setLayout(new MigLayout("wrap, fillx, inset 3", "[fill]", "[]0[]"));
+        
+        // Mostrar información del usuario autenticado
+        mostrarInformacionUsuario();
+    }
+    
+    private void mostrarInformacionUsuario() {
+        Modelo.Usuario usuario = Controlador.AuthController.getUsuarioActual();
+        if (usuario != null) {
+            jLabel1.setText(usuario.getNombre() + " " + usuario.getApellido());
+            if (usuario.getPermiso() != null) {
+                lbl_rol.setText(usuario.getPermiso().getRol());
+            }
+        }
     }
 
     public void initMenu(EventMenu event) {
         this.event = event;
         addMenu(new ImageIcon(getClass().getResource("/Iconos/1.png")), "Inicio", 0);
-        addMenu(new ImageIcon(getClass().getResource("/Iconos/2.png")), "Usuarios", 1);
-        addMenu(new ImageIcon(getClass().getResource("/Iconos/3.png")), "Empleados", 2);
-        addMenu(new ImageIcon(getClass().getResource("/Iconos/4.png")), "Asistencia", 3);
-        addMenu(new ImageIcon(getClass().getResource("/Iconos/5.png")), "Faltas", 4);
-        addMenu(new ImageIcon(getClass().getResource("/Iconos/6.png")), "Reportes", 5);
-        addMenu(new ImageIcon(getClass().getResource("/Iconos/7.png")), "Configuraciones", 6);
+        addMenu(new ImageIcon(getClass().getResource("/Iconos/2.png")), "Clientes", 1);
+        addMenu(new ImageIcon(getClass().getResource("/Iconos/3.png")), "Pedidos", 2);
+        addMenu(new ImageIcon(getClass().getResource("/Iconos/4.png")), "Control Stock", 3);
+        addMenu(new ImageIcon(getClass().getResource("/Iconos/5.png")), "Movimientos", 4);
+        addMenu(new ImageIcon(getClass().getResource("/Iconos/6.png")), "Reclamos", 5);
+        addMenu(new ImageIcon(getClass().getResource("/Iconos/7.png")), "Ubicación", 6);
+        addMenu(new ImageIcon(getClass().getResource("/Iconos/Reporte.png")), "Reportes", 7);
         addEmpty();
-        addMenu(new ImageIcon(getClass().getResource("/Iconos/logout.png")), "Cerrar Sesion", 7);
+        addMenu(new ImageIcon(getClass().getResource("/Iconos/logout.png")), "Cerrar Sesion", 8);
     }
 
     private void addEmpty() {

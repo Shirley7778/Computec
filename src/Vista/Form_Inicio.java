@@ -11,6 +11,8 @@ import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
+import Controlador.AuthController;
+import Modelo.Usuario;
 
 /**
  *
@@ -26,6 +28,16 @@ public class Form_Inicio extends javax.swing.JPanel {
         lbl_fecha.setText(fecha()); //establecer la fecha 
         iniciarHora();//llamar al metodo para actualizar la hora 
         mostrarAsistenciasDelDia();
+        
+        // Mostrar información del usuario actual si está autenticado
+        try {
+            Modelo.Usuario usuario = Controlador.AuthController.getUsuarioActual();
+            if (usuario != null) {
+                lbl_bienvenido.setText("Bienvenido " );
+            }
+        } catch (Exception e) {
+            // Si no hay usuario autenticado, mantener el mensaje por defecto
+        }
     }
 
     /**
@@ -69,7 +81,7 @@ public class Form_Inicio extends javax.swing.JPanel {
 
         lbl_bienvenido.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
         lbl_bienvenido.setForeground(new java.awt.Color(255, 255, 255));
-        lbl_bienvenido.setText("Bienvenido ....");
+        lbl_bienvenido.setText("Bienvenido ");
 
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/Reloj.png"))); // NOI18N
 
@@ -178,21 +190,19 @@ public class Form_Inicio extends javax.swing.JPanel {
 
     //----------------------------------------------------
     //-------------------------------    
-    //METODO PARA MOTRAR ASISTECIAS DEL DIA ACTUAL A LA TABLA JPANEL
+    //METODO PARA MOSTRAR INFORMACIÓN DEL SISTEMA EN LA TABLA JPANEL
     //-------------------------------
     void mostrarAsistenciasDelDia() {
-    // Títulos de las columnas según los campos que necesitas mostrar
-    String[] titulos = {"asistencia_id", "nombre", "apellido", "dni", "turno", "cargo", "fecha", "hora_entrada", "hora_salida", "estado"};
+    // Títulos de las columnas para mostrar información del sistema
+    String[] titulos = {"ID", "Nombre", "Apellido", "DNI", "Rol", "Acceso"};
     modelo = new DefaultTableModel(null, titulos); // Crea un modelo de tabla con los títulos de las columnas
     tbl_Inicio.setModel(modelo); // Establece el modelo a la tabla
 
-    // Consulta SQL para obtener las asistencias del día actual y los datos relacionados del empleado, turno y cargo
-    String sql = "SELECT a.asistencia_id, e.nombre, e.apellido, e.dni, t.nombre_turno AS turno, c.nombre_cargo AS cargo, a.fecha, a.hora_entrada, a.hora_salida, a.estado " +
-                 "FROM Asistencia a " +
-                 "JOIN Empleado e ON a.empleado_id = e.empleado_id " +
-                 "JOIN Turno t ON e.turno_id = t.turno_id " +
-                 "JOIN Cargo c ON e.cargo_id = c.cargo_id " +
-                 "WHERE a.fecha = CURDATE();"; // Filtra por la fecha actual
+    // Consulta SQL para obtener información de usuarios del sistema
+    String sql = "SELECT u.id_usuario, u.nombre, u.apellido, u.dni, p.rol, p.acceso " +
+                 "FROM usuarios u " +
+                 "INNER JOIN permisos p ON u.permiso_id = p.id_permiso " +
+                 "ORDER BY u.id_usuario;"; // Ordena por ID de usuario
 
     try (Connection conet = conn.conectar(); // Establece la conexión a la base de datos
          Statement st = conet.createStatement(); // Crea una declaración para ejecutar la consulta
@@ -200,23 +210,19 @@ public class Form_Inicio extends javax.swing.JPanel {
 
         while (rs.next()) {
             // Crea un array de objetos para almacenar los datos de cada fila
-            Object[] fila = new Object[10];
-            fila[0] = rs.getInt("asistencia_id");
+            Object[] fila = new Object[6];
+            fila[0] = rs.getInt("id_usuario");
             fila[1] = rs.getString("nombre");
             fila[2] = rs.getString("apellido");
             fila[3] = rs.getString("dni");
-            fila[4] = rs.getString("turno");
-            fila[5] = rs.getString("cargo");
-            fila[6] = rs.getDate("fecha");
-            fila[7] = rs.getTime("hora_entrada");
-            fila[8] = rs.getTime("hora_salida");
-            fila[9] = rs.getString("estado");
+            fila[4] = rs.getString("rol");
+            fila[5] = rs.getString("acceso");
             modelo.addRow(fila); // Agrega la fila al modelo de la tabla
         }
 
     } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Error al mostrar las asistencias: " + e.getMessage()); // Muestra un mensaje de error si ocurre una excepción
-        System.out.println("Error al mostrar las asistencias: " + e.getMessage()); // Imprime el error en la consola
+        JOptionPane.showMessageDialog(null, "Error al mostrar la información del sistema: " + e.getMessage()); // Muestra un mensaje de error si ocurre una excepción
+        System.out.println("Error al mostrar la información del sistema: " + e.getMessage()); // Imprime el error en la consola
     }
 }
 }

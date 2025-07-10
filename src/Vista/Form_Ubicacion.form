@@ -51,7 +51,7 @@
                               </Group>
                               <Group type="102" attributes="0">
                                   <Component id="txtDescripcion" min="-2" pref="765" max="-2" attributes="0"/>
-                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  <EmptySpace min="0" pref="139" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -66,15 +66,9 @@
               <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace pref="45" max="32767" attributes="0"/>
-              <Component id="txtZona" min="-2" pref="90" max="-2" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="txtPasillo" min="-2" pref="91" max="-2" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="txtEstante" min="-2" pref="90" max="-2" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="txtNivel" min="-2" pref="90" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="117" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
+              <Component id="txtZona" min="-2" pref="414" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
               <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
               <Component id="txtCapacidad" min="-2" pref="235" max="-2" attributes="0"/>
@@ -124,14 +118,9 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
-                                  <Group type="103" alignment="1" groupAlignment="3" attributes="0">
-                                      <Component id="txtNivel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="txtEstante" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="txtPasillo" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="txtZona" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtZona" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
@@ -159,7 +148,7 @@
               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
               <Component id="txt_buscarDni" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="195" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="194" max="32767" attributes="0"/>
               <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="btn_nuevo" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -367,8 +356,6 @@
         <Property name="text" type="java.lang.String" value="Zona"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="txtPasillo">
-    </Component>
     <Component class="javax.swing.JLabel" name="jLabel5">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -380,8 +367,6 @@
         <Property name="text" type="java.lang.String" value="Pasillo"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="txtEstante">
-    </Component>
     <Component class="javax.swing.JLabel" name="jLabel6">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -392,8 +377,6 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Estante"/>
       </Properties>
-    </Component>
-    <Component class="javax.swing.JTextField" name="txtNivel">
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel7">
       <Properties>

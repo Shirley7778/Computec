@@ -4,6 +4,8 @@
  */
 package Vista;
 
+import Controlador.AuthController;
+import Modelo.Usuario;
 
 /**
  *
@@ -80,7 +82,7 @@ public class Form_InicioSesion extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Serif", 1, 20)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("Usuario:");
+        jLabel2.setText("Nombre:");
 
         jLabel3.setFont(new java.awt.Font("Serif", 1, 20)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
@@ -217,11 +219,27 @@ public class Form_InicioSesion extends javax.swing.JFrame {
     }//GEN-LAST:event_pwdContraseñaActionPerformed
 
     private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarActionPerformed
+        String nombre = txtUsuario.getText().trim();
+        String password = new String(pwdContraseña.getPassword());
         
+        AuthController authController = new AuthController();
+        if (authController.autenticar(nombre, password)) {
+            // Obtener el usuario autenticado
+            Modelo.Usuario usuario = AuthController.getUsuarioActual();
+            
+            // Abrir la ventana principal con el permiso del usuario
+            Main main = new Main((int) usuario.getPermiso().getIdPermiso());
+            main.setVisible(true);
+            
+            // Cerrar la ventana de login
+            this.dispose();
+        }
     }//GEN-LAST:event_btnIniciarActionPerformed
 
     private void btnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarActionPerformed
-      
+        // Cierra la ventana de login y termina la aplicación
+        this.dispose();
+        System.exit(0);
     }//GEN-LAST:event_btnCerrarActionPerformed
 
     private void txtVerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtVerMouseClicked

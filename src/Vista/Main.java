@@ -4,8 +4,13 @@ import menu.componentes.evento.EventMenu;
 import Vista.Form_Inicio;
 import Vista.Form_Ubicacion;
 import Vista.Form_Reclamos;
-
+import Vista.Form_Clientes;
+import Vista.Form_Pedidos;
+import Vista.Form_ControlStock;
+import Vista.Form_Movimientos;
 import Vista.Form_Reporte;
+import Controlador.AuthController;
+import Modelo.Usuario;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -13,22 +18,123 @@ import javax.swing.JOptionPane;
 
 public class Main extends javax.swing.JFrame {
 
-    
+    private Usuario usuarioActual;
+    private int permisoId;
 
     public Main(int permiso_id) {
+        this.permisoId = permiso_id;
+        this.usuarioActual = AuthController.getUsuarioActual();
         
         initComponents();
         getContentPane().setBackground(new Color(0, 0, 0, 0));
+        
+        // Configurar el menú según los permisos del usuario
+        configurarMenu();
+        
+        // Mostrar la pantalla de inicio por defecto
+        showForm(new Form_Inicio());
+    }
+
+    private void configurarMenu() {
         EventMenu event = new EventMenu() {
             @Override
             public void selected(int index) {
-                
+                switch (index) {
+                    case 0: // Inicio
+                        showForm(new Form_Inicio());
+                        break;
+                    case 1: // Clientes
+                        if (tienePermiso("Cliente")) {
+                            showForm(new Form_Clientes());
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No tiene permisos para acceder a Clientes", 
+                                                       "Acceso Denegado", JOptionPane.WARNING_MESSAGE);
+                        }
+                        break;
+                    case 2: // Pedidos
+                        if (tienePermiso("Pedido")) {
+                            showForm(new Form_Pedidos());
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No tiene permisos para acceder a Pedidos", 
+                                                       "Acceso Denegado", JOptionPane.WARNING_MESSAGE);
+                        }
+                        break;
+                    case 3: // Control de Stock
+                        if (tienePermiso("ControlStock")) {
+                            showForm(new Form_ControlStock());
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No tiene permisos para acceder a Control de Stock", 
+                                                       "Acceso Denegado", JOptionPane.WARNING_MESSAGE);
+                        }
+                        break;
+                    case 4: // Movimientos
+                        if (tienePermiso("Movimiento")) {
+                            showForm(new Form_Movimientos());
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No tiene permisos para acceder a Movimientos", 
+                                                       "Acceso Denegado", JOptionPane.WARNING_MESSAGE);
+                        }
+                        break;
+                    case 5: // Reclamos
+                        if (tienePermiso("Reclamo")) {
+                            showForm(new Form_Reclamos());
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No tiene permisos para acceder a Reclamos", 
+                                                       "Acceso Denegado", JOptionPane.WARNING_MESSAGE);
+                        }
+                        break;
+                    case 6: // Ubicación
+                        if (tienePermiso("Ubicacion")) {
+                            showForm(new Form_Ubicacion());
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No tiene permisos para acceder a Ubicación", 
+                                                       "Acceso Denegado", JOptionPane.WARNING_MESSAGE);
+                        }
+                        break;
+                    case 7: // Reportes
+                        if (tienePermiso("Reporte")) {
+                            showForm(new Form_Reporte());
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No tiene permisos para acceder a Reportes", 
+                                                       "Acceso Denegado", JOptionPane.WARNING_MESSAGE);
+                        }
+                        break;
+                    case 8: // Cerrar Sesión
+                        cerrarSesion();
+                        break;
+                }
             }
         };
         menu1.initMenu(event);
-
-        showForm(
-                new Form_Inicio());
+    }
+    
+    private boolean tienePermiso(String permiso) {
+        if (usuarioActual == null || usuarioActual.getPermiso() == null) {
+            return false;
+        }
+        
+        String acceso = usuarioActual.getPermiso().getAcceso();
+        if (acceso == null) {
+            return false;
+        }
+        
+        return acceso.contains(permiso);
+    }
+    
+    private void cerrarSesion() {
+        int opcion = JOptionPane.showConfirmDialog(this, 
+            "¿Está seguro que desea cerrar sesión?", 
+            "Cerrar Sesión", 
+            JOptionPane.YES_NO_OPTION);
+            
+        if (opcion == JOptionPane.YES_OPTION) {
+            AuthController.cerrarSesion();
+            this.dispose();
+            
+            // Abrir nuevamente la pantalla de login
+            Form_InicioSesion login = new Form_InicioSesion();
+            login.setVisible(true);
+        }
     }
 
     private void showForm(Component com) {
@@ -83,7 +189,7 @@ public class Main extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(roundPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -119,7 +225,9 @@ public class Main extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Main(1).setVisible(true);
+                // Iniciar con la pantalla de login
+                Form_InicioSesion login = new Form_InicioSesion();
+                login.setVisible(true);
             }
         });
     }
