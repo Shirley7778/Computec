@@ -39,7 +39,7 @@ public class Form_InicioSesion extends javax.swing.JFrame {
         this.txtOcultar.setVisible(false);
         //imagenes
         rsscalelabel.RSScaleLabel.setScaleLabel(logo1, "src/Iconos/logo.png");
-        rsscalelabel.RSScaleLabel.setScaleLabel(fondo, "src/Iconos/fondo.jpg");
+        rsscalelabel.RSScaleLabel.setScaleLabel(fondo, "src/Iconos/fondo nuevo.jpg");
 
     }
 

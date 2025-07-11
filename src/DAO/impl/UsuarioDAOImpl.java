@@ -118,6 +118,21 @@ public class UsuarioDAOImpl implements UsuarioDAO {
         return null;
     }
   
+    @Override
+    public void actualizarIntentosYUltimaVez(long idUsuario, int intentos, java.time.LocalDateTime ultimaVez) throws Exception {
+        String sql = "UPDATE usuarios SET intentos = ?, ultima_vez = ? WHERE id_usuario = ?";
+        try (Connection conn = conexion.conectar();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, intentos);
+            if (ultimaVez != null) {
+                ps.setTimestamp(2, java.sql.Timestamp.valueOf(ultimaVez));
+            } else {
+                ps.setNull(2, java.sql.Types.TIMESTAMP);
+            }
+            ps.setLong(3, idUsuario);
+            ps.executeUpdate();
+        }
+    }
     
     /**
      * Mapea un ResultSet a un objeto Usuario
@@ -130,6 +145,13 @@ public class UsuarioDAOImpl implements UsuarioDAO {
         usuario.setDni(rs.getString("dni"));
         usuario.setTelefono(rs.getString("telefono"));
         usuario.setContrasena(rs.getString("contrasena"));
+        usuario.setIntentos(rs.getInt("intentos"));
+        Timestamp ts = rs.getTimestamp("ultima_vez");
+        if (ts != null) {
+            usuario.setUltimaVez(ts.toLocalDateTime());
+        } else {
+            usuario.setUltimaVez(null);
+        }
         
         // Crear objeto Permiso
         Permiso permiso = new Permiso();

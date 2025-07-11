@@ -8,6 +8,8 @@ public class Usuario {
     private String telefono;
     private String contrasena;
     private Permiso permiso;
+    private int intentos;
+    private java.time.LocalDateTime ultimaVez;
 
     public Usuario() {}
 
@@ -76,5 +78,21 @@ public class Usuario {
 
     public void setPermiso(Permiso permiso) {
         this.permiso = permiso;
+    }
+
+    public int getIntentos() {
+        return intentos;
+    }
+
+    public void setIntentos(int intentos) {
+        this.intentos = intentos;
+    }
+
+    public java.time.LocalDateTime getUltimaVez() {
+        return ultimaVez;
+    }
+
+    public void setUltimaVez(java.time.LocalDateTime ultimaVez) {
+        this.ultimaVez = ultimaVez;
     }
 }

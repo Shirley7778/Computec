@@ -15,6 +15,9 @@ public class Form_Movimientos extends javax.swing.JPanel {
      */
     public Form_Movimientos() {
         initComponents();
+        setCamposHabilitados(false);
+        configurarCombos();
+        cargarMovimientosEnTabla();
     }
 
     /**
@@ -44,11 +47,10 @@ public class Form_Movimientos extends javax.swing.JPanel {
         jLabel7 = new javax.swing.JLabel();
         txtObservaciones = new javax.swing.JTextField();
         lbl_ingresarDNI = new javax.swing.JLabel();
-        txt_buscarDni = new javax.swing.JTextField();
+        txt_buscar = new javax.swing.JTextField();
         btn_nuevo = new javax.swing.JButton();
         btn_guardar = new javax.swing.JButton();
         btn_eliminar = new javax.swing.JButton();
-        btn_crear = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_usuario = new javax.swing.JTable();
 
@@ -101,9 +103,9 @@ public class Form_Movimientos extends javax.swing.JPanel {
         lbl_ingresarDNI.setForeground(new java.awt.Color(255, 255, 255));
         lbl_ingresarDNI.setText("Buscar movimiento :");
 
-        txt_buscarDni.addActionListener(new java.awt.event.ActionListener() {
+        txt_buscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_buscarDniActionPerformed(evt);
+                txt_buscarActionPerformed(evt);
             }
         });
 
@@ -137,17 +139,6 @@ public class Form_Movimientos extends javax.swing.JPanel {
         btn_eliminar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_eliminarActionPerformed(evt);
-            }
-        });
-
-        btn_crear.setBackground(new java.awt.Color(25, 25, 25));
-        btn_crear.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
-        btn_crear.setForeground(new java.awt.Color(255, 255, 255));
-        btn_crear.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/Crear.png"))); // NOI18N
-        btn_crear.setText("Crear");
-        btn_crear.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_crearActionPerformed(evt);
             }
         });
 
@@ -193,7 +184,7 @@ public class Form_Movimientos extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(cmbProducto, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(cmbProducto, 0, 267, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -206,7 +197,7 @@ public class Form_Movimientos extends javax.swing.JPanel {
                         .addComponent(jLabel6)
                         .addGap(18, 18, 18)
                         .addComponent(txtUbicacion, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(txt_buscarDni)
+                    .addComponent(txt_buscar)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -214,11 +205,9 @@ public class Form_Movimientos extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtObservaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btn_crear, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtObservaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1))
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -250,13 +239,11 @@ public class Form_Movimientos extends javax.swing.JPanel {
                             .addComponent(jLabel7)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(34, 34, 34)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtObservaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btn_crear))))
+                        .addComponent(txtObservaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lbl_ingresarDNI)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txt_buscarDni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txt_buscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                 .addGap(31, 31, 31)
@@ -268,29 +255,180 @@ public class Form_Movimientos extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txt_buscarDniActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_buscarDniActionPerformed
+    // Método para habilitar/deshabilitar campos
+    private void setCamposHabilitados(boolean habilitado) {
+        cmbTipoMovimiento.setEnabled(habilitado);
+        txtCantidad.setEnabled(habilitado);
+        cmbProducto.setEnabled(habilitado);
+        cmbMotivo.setEnabled(habilitado);
+        txtOrigen.setEnabled(habilitado);
+        txtUbicacion.setEnabled(habilitado);
+        txtReferencias.setEnabled(habilitado);
+        txtObservaciones.setEnabled(habilitado);
+    }
 
-    }//GEN-LAST:event_txt_buscarDniActionPerformed
+    // Configurar los combos de productos y motivos
+    private void configurarCombos() {
+        cmbProducto.removeAllItems();
+        cmbProducto.addItem("Laptop Lenovo");
+        cmbProducto.addItem("Mouse Logitech");
+        cmbProducto.addItem("Teclado Mecánico HyperX");
+        cmbProducto.addItem("Monitor Samsung 24");
+        cmbProducto.addItem("Disco SSD Kingston 480GB");
+        cmbProducto.addItem("Impresora Epson EcoTank");
+        cmbProducto.addItem("Router TP-Link Archer");
+        cmbProducto.addItem("Tablet Samsung Galaxy Tab A7");
+        cmbProducto.addItem("Silla Gamer Cougar");
+        cmbProducto.addItem("UPS APC 1200VA");
+        cmbMotivo.removeAllItems();
+        cmbMotivo.addItem("Venta");
+        cmbMotivo.addItem("Compra");
+        cmbTipoMovimiento.removeAllItems();
+        cmbTipoMovimiento.addItem("Entrada");
+        cmbTipoMovimiento.addItem("Salida");
+    }
 
-    private void btn_nuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_nuevoActionPerformed
+    // Limpiar los campos
+    private void limpiarCampos() {
+        cmbTipoMovimiento.setSelectedIndex(-1);
+        txtCantidad.setText("");
+        cmbProducto.setSelectedIndex(-1);
+        cmbMotivo.setSelectedIndex(-1);
+        txtOrigen.setText("");
+        txtUbicacion.setText("");
+        txtReferencias.setText("");
+        txtObservaciones.setText("");
+    }
 
-    }//GEN-LAST:event_btn_nuevoActionPerformed
+    // Cargar movimientos en la tabla
+    private void cargarMovimientosEnTabla() {
+        try {
+            javax.swing.table.DefaultTableModel modelo = new javax.swing.table.DefaultTableModel(
+                new Object[][]{},
+                new String[]{"ID", "Tipo", "Cantidad", "Producto", "Motivo", "Origen", "Ubicación", "Referencia", "Observaciones"}
+            );
+            DAO.MovimientoInventarioDAO movDAO = DAO.DAOFactory.getMovimientoInventarioDAO();
+            java.util.List<Modelo.MovimientoInventario> movimientos = movDAO.findAll();
+            for (Modelo.MovimientoInventario m : movimientos) {
+                String productoNombre = (m.getStock() != null && m.getStock().getProducto() != null) ? m.getStock().getProducto().getNombre() : "";
+                String ubicacionNombre = (m.getUbicacionFisica() != null) ? m.getUbicacionFisica().getMiUbicacionFisica() : "";
+                modelo.addRow(new Object[]{
+                    m.getMovimientoId(),
+                    m.getTipo(),
+                    m.getCantidad(),
+                    productoNombre,
+                    m.getMotivo(),
+                    m.getUbicacionProveedor(),
+                    ubicacionNombre,
+                    m.getReferencia(),
+                    m.getObservaciones()
+                });
+            }
+            tbl_usuario.setModel(modelo);
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Error al cargar movimientos: " + e.getMessage());
+        }
+    }
 
-    private void btn_guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_guardarActionPerformed
+    // Buscar movimiento por referencia
+    private void buscarMovimientoPorReferencia(String referencia) {
+        try {
+            javax.swing.table.DefaultTableModel modelo = new javax.swing.table.DefaultTableModel(
+                new Object[][]{},
+                new String[]{"ID", "Tipo", "Cantidad", "Producto", "Motivo", "Origen", "Ubicación", "Referencia", "Observaciones"}
+            );
+            DAO.MovimientoInventarioDAO movDAO = DAO.DAOFactory.getMovimientoInventarioDAO();
+            java.util.List<Modelo.MovimientoInventario> movimientos = movDAO.findAll();
+            for (Modelo.MovimientoInventario m : movimientos) {
+                if (m.getReferencia() != null && m.getReferencia().equalsIgnoreCase(referencia)) {
+                    String productoNombre = (m.getStock() != null && m.getStock().getProducto() != null) ? m.getStock().getProducto().getNombre() : "";
+                    String ubicacionNombre = (m.getUbicacionFisica() != null) ? m.getUbicacionFisica().getMiUbicacionFisica() : "";
+                    modelo.addRow(new Object[]{
+                        m.getMovimientoId(),
+                        m.getTipo(),
+                        m.getCantidad(),
+                        productoNombre,
+                        m.getMotivo(),
+                        m.getUbicacionProveedor(),
+                        ubicacionNombre,
+                        m.getReferencia(),
+                        m.getObservaciones()
+                    });
+                }
+            }
+            tbl_usuario.setModel(modelo);
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Error al buscar movimiento: " + e.getMessage());
+        }
+    }
 
-    }//GEN-LAST:event_btn_guardarActionPerformed
+    // Evento btn_nuevo
+    private void btn_nuevoActionPerformed(java.awt.event.ActionEvent evt) {
+        setCamposHabilitados(true);
+        limpiarCampos();
+    }
 
-    private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
+    // Evento btn_guardar
+    private void btn_guardarActionPerformed(java.awt.event.ActionEvent evt) {
+        try {
+            Modelo.MovimientoInventario mov = new Modelo.MovimientoInventario();
+            mov.setTipo((String) cmbTipoMovimiento.getSelectedItem());
+            mov.setCantidad(Integer.parseInt(txtCantidad.getText()));
+            // Buscar el objeto Stock por nombre de producto
+            String nombreProducto = (String) cmbProducto.getSelectedItem();
+            DAO.StockDAO stockDAO = DAO.DAOFactory.getStockDAO();
+            Modelo.Stock stock = stockDAO.findByProductoNombre(nombreProducto);
+            mov.setStock(stock);
+            mov.setMotivo((String) cmbMotivo.getSelectedItem());
+            mov.setUbicacionProveedor(txtOrigen.getText());
+            // Buscar el objeto UbicacionFisica por nombre
+            String nombreUbicacion = txtUbicacion.getText();
+            DAO.UbicacionFisicaDAO ubiDAO = DAO.DAOFactory.getUbicacionFisicaDAO();
+            Modelo.UbicacionFisica ubicacion = ubiDAO.findByNombre(nombreUbicacion);
+            mov.setUbicacionFisica(ubicacion);
+            mov.setReferencia(txtReferencias.getText());
+            mov.setObservaciones(txtObservaciones.getText());
+            DAO.MovimientoInventarioDAO movDAO = DAO.DAOFactory.getMovimientoInventarioDAO();
+            movDAO.create(mov);
+            javax.swing.JOptionPane.showMessageDialog(this, "Movimiento guardado correctamente");
+            setCamposHabilitados(false);
+            limpiarCampos();
+            cargarMovimientosEnTabla();
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Error al guardar movimiento: " + e.getMessage());
+        }
+    }
 
-    }//GEN-LAST:event_btn_eliminarActionPerformed
+    // Evento btn_eliminar
+    private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {
+        int fila = tbl_usuario.getSelectedRow();
+        if (fila >= 0) {
+            Long id = (Long) tbl_usuario.getValueAt(fila, 0);
+            try {
+                DAO.MovimientoInventarioDAO movDAO = DAO.DAOFactory.getMovimientoInventarioDAO();
+                movDAO.delete(id);
+                javax.swing.JOptionPane.showMessageDialog(this, "Movimiento eliminado correctamente");
+                cargarMovimientosEnTabla();
+            } catch (Exception e) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Error al eliminar movimiento: " + e.getMessage());
+            }
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Seleccione un movimiento para eliminar");
+        }
+    }
 
-    private void btn_crearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_crearActionPerformed
-
-    }//GEN-LAST:event_btn_crearActionPerformed
+    // Evento buscar por referencia
+    private void txt_buscarActionPerformed(java.awt.event.ActionEvent evt) {
+        String ref = txt_buscar.getText();
+        if (!ref.trim().isEmpty()) {
+            buscarMovimientoPorReferencia(ref);
+        } else {
+            cargarMovimientosEnTabla();
+        }
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btn_crear;
     private javax.swing.JButton btn_eliminar;
     private javax.swing.JButton btn_guardar;
     private javax.swing.JButton btn_nuevo;
@@ -314,6 +452,6 @@ public class Form_Movimientos extends javax.swing.JPanel {
     private javax.swing.JTextField txtOrigen;
     private javax.swing.JTextField txtReferencias;
     private javax.swing.JTextField txtUbicacion;
-    private javax.swing.JTextField txt_buscarDni;
+    private javax.swing.JTextField txt_buscar;
     // End of variables declaration//GEN-END:variables
 }
