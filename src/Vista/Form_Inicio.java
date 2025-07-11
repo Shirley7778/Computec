@@ -13,6 +13,11 @@ import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 import Controlador.AuthController;
 import Modelo.Usuario;
+import Servicio.PedidoServicio;
+import Modelo.Pedido;
+import java.util.List;
+import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 
 /**
  *
@@ -22,18 +27,20 @@ public class Form_Inicio extends javax.swing.JPanel {
 
     DefaultTableModel modelo;
     Conexion conn = new Conexion();
+    private PedidoServicio pedidoServicio;
 
     public Form_Inicio() {
         initComponents();
+        pedidoServicio = new PedidoServicio();
         lbl_fecha.setText(fecha()); //establecer la fecha 
         iniciarHora();//llamar al metodo para actualizar la hora 
-        mostrarAsistenciasDelDia();
+        mostrarInformacionDelDia();
         
         // Mostrar información del usuario actual si está autenticado
         try {
             Modelo.Usuario usuario = Controlador.AuthController.getUsuarioActual();
             if (usuario != null) {
-                lbl_bienvenido.setText("Bienvenido " );
+                lbl_bienvenido.setText("Bienvenido " + usuario.getNombre() + " " + usuario.getApellido());
             }
         } catch (Exception e) {
             // Si no hay usuario autenticado, mantener el mensaje por defecto
@@ -97,22 +104,12 @@ public class Form_Inicio extends javax.swing.JPanel {
 
         jLabel1.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Asistencias del dia de hoy");
+        jLabel1.setText("Ventas realizadas del dia ");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(839, 839, 839)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel4))
-                .addGap(35, 35, 35)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbl_hora)
-                    .addComponent(lbl_fecha))
-                .addGap(117, 117, 117))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -122,8 +119,20 @@ public class Form_Inicio extends javax.swing.JPanel {
                         .addGap(25, 25, 25)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane1)
-                            .addComponent(lbl_bienvenido, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 362, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 362, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lbl_bienvenido, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 599, Short.MAX_VALUE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel4))
+                        .addGap(35, 35, 35)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbl_hora)
+                            .addComponent(lbl_fecha))))
                 .addGap(25, 25, 25))
         );
         layout.setVerticalGroup(
@@ -145,7 +154,7 @@ public class Form_Inicio extends javax.swing.JPanel {
                 .addGap(39, 39, 39)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 319, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
                 .addGap(25, 25, 25))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -190,39 +199,46 @@ public class Form_Inicio extends javax.swing.JPanel {
 
     //----------------------------------------------------
     //-------------------------------    
-    //METODO PARA MOSTRAR INFORMACIÓN DEL SISTEMA EN LA TABLA JPANEL
+    //METODO PARA MOSTRAR PEDIDOS CANCELADOS EN LA TABLA
     //-------------------------------
-    void mostrarAsistenciasDelDia() {
-    // Títulos de las columnas para mostrar información del sistema
-    String[] titulos = {"ID", "Nombre", "Apellido", "DNI", "Rol", "Acceso"};
-    modelo = new DefaultTableModel(null, titulos); // Crea un modelo de tabla con los títulos de las columnas
-    tbl_Inicio.setModel(modelo); // Establece el modelo a la tabla
-
-    // Consulta SQL para obtener información de usuarios del sistema
-    String sql = "SELECT u.id_usuario, u.nombre, u.apellido, u.dni, p.rol, p.acceso " +
-                 "FROM usuarios u " +
-                 "INNER JOIN permisos p ON u.permiso_id = p.id_permiso " +
-                 "ORDER BY u.id_usuario;"; // Ordena por ID de usuario
-
-    try (Connection conet = conn.conectar(); // Establece la conexión a la base de datos
-         Statement st = conet.createStatement(); // Crea una declaración para ejecutar la consulta
-         ResultSet rs = st.executeQuery(sql)) { // Ejecuta la consulta y obtiene el ResultSet
-
-        while (rs.next()) {
-            // Crea un array de objetos para almacenar los datos de cada fila
-            Object[] fila = new Object[6];
-            fila[0] = rs.getInt("id_usuario");
-            fila[1] = rs.getString("nombre");
-            fila[2] = rs.getString("apellido");
-            fila[3] = rs.getString("dni");
-            fila[4] = rs.getString("rol");
-            fila[5] = rs.getString("acceso");
-            modelo.addRow(fila); // Agrega la fila al modelo de la tabla
+    void mostrarInformacionDelDia() {
+        try {
+            // Configurar tabla para mostrar solo pedidos cancelados
+            String[] titulos = {"ID Pedido", "Cliente", "Fecha", "Total", "Estado"};
+            modelo = new DefaultTableModel(null, titulos);
+            tbl_Inicio.setModel(modelo);
+            
+            // Obtener solo los pedidos cancelados del día
+            List<Pedido> pedidosCancelados = pedidoServicio.obtenerPedidosCanceladosDelDia();
+            
+            // Formato para la fecha
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+            
+            // Llenar la tabla con los pedidos cancelados
+            for (Pedido pedido : pedidosCancelados) {
+                Object[] fila = new Object[5];
+                fila[0] = pedido.getIdPedido();
+                fila[1] = pedido.getCliente().getNombreEmpresa() != null ? 
+                         pedido.getCliente().getNombreEmpresa() : 
+                         pedido.getCliente().getRucDni();
+                fila[2] = pedido.getFecha().format(formatter);
+                fila[3] = "S/. " + pedido.getTotal().toString();
+                fila[4] = pedido.getEstado();
+                
+                modelo.addRow(fila);
+            }
+            
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al cargar los pedidos cancelados: " + e.getMessage());
+            System.out.println("Error al cargar los pedidos cancelados: " + e.getMessage());
         }
-
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Error al mostrar la información del sistema: " + e.getMessage()); // Muestra un mensaje de error si ocurre una excepción
-        System.out.println("Error al mostrar la información del sistema: " + e.getMessage()); // Imprime el error en la consola
     }
-}
+    
+    //----------------------------------------------------
+    //-------------------------------    
+    //METODO PARA REFRESCAR LA INFORMACIÓN DEL DÍA
+    //-------------------------------
+    public void refrescarInformacion() {
+        mostrarInformacionDelDia();
+    }
 }

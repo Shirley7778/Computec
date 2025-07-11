@@ -47,7 +47,7 @@ public class ClienteDAOImpl implements ClienteDAO {
 
     @Override
     public List<Cliente> findAll() throws Exception {
-        String sql = "SELECT * FROM clientes";
+        String sql = "SELECT * FROM clientes WHERE estado = 'Activo'";
         List<Cliente> lista = new ArrayList<>();
         try (Connection cn = conexion.conectar();
              PreparedStatement ps = cn.prepareStatement(sql);
@@ -84,6 +84,30 @@ public class ClienteDAOImpl implements ClienteDAO {
         try (Connection cn = conexion.conectar();
              PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setLong(1, id);
+            ps.executeUpdate();
+        }
+    }
+
+    @Override
+    public Cliente findByRucDni(String rucDni) throws Exception {
+        String sql = "SELECT * FROM clientes WHERE ruc_dni = ?";
+        try (Connection cn = conexion.conectar();
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setString(1, rucDni);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return map(rs);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void setEstadoInactivo(long idCliente) throws Exception {
+        String sql = "UPDATE clientes SET estado = 'Inactivo' WHERE id_cliente = ?";
+        try (Connection cn = conexion.conectar();
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setLong(1, idCliente);
             ps.executeUpdate();
         }
     }

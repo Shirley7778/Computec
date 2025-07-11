@@ -16,9 +16,6 @@ public class AuthController {
     
     /**
      * Autentica un usuario con nombre y contraseña
-     * @param nombre El nombre del usuario
-     * @param password La contraseña en texto plano
-     * @return true si la autenticación es exitosa, false en caso contrario
      */
     public boolean autenticar(String nombre, String password) {
         try {
@@ -39,15 +36,46 @@ public class AuthController {
                 JOptionPane.showMessageDialog(null, "Usuario no encontrado", "Error de Autenticación", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
-            
+
+            // Manejo de intentos y bloqueo temporal
+            int maxIntentos = 3;
+            int minutosBloqueo = 5;
+            java.time.LocalDateTime ahora = java.time.LocalDateTime.now();
+            if (usuario.getIntentos() >= maxIntentos) {
+                if (usuario.getUltimaVez() != null) {
+                    java.time.Duration duracion = java.time.Duration.between(usuario.getUltimaVez(), ahora);
+                    if (duracion.toMinutes() < minutosBloqueo) {
+                        JOptionPane.showMessageDialog(null, "Usuario bloqueado. Intente nuevamente en " + (minutosBloqueo - duracion.toMinutes()) + " minutos.", "Usuario bloqueado", JOptionPane.ERROR_MESSAGE);
+                        return false;
+                    } else {
+                        // Desbloquear usuario
+                        usuario.setIntentos(0);
+                        usuario.setUltimaVez(null);
+                        usuarioDAO.actualizarIntentosYUltimaVez(usuario.getIdUsuario(), 0, null);
+                    }
+                }
+            }
+
             // Verificar contraseña usando SHA256
-            if (EncriptacionUtil.verificarPassword(password, usuario.getContrasena())) {
+            if (Utilidades.EncriptacionUtil.verificarPassword(password, usuario.getContrasena())) {
                 usuarioActual = usuario;
+                // Resetear intentos y ultima_vez
+                usuario.setIntentos(0);
+                usuario.setUltimaVez(null);
+                usuarioDAO.actualizarIntentosYUltimaVez(usuario.getIdUsuario(), 0, null);
                 JOptionPane.showMessageDialog(null, "Bienvenido " + usuario.getNombre() + " " + usuario.getApellido(), 
                                            "Login Exitoso", JOptionPane.INFORMATION_MESSAGE);
                 return true;
             } else {
-                JOptionPane.showMessageDialog(null, "Contraseña incorrecta", "Error de Autenticación", JOptionPane.ERROR_MESSAGE);
+                int nuevosIntentos = usuario.getIntentos() + 1;
+                usuario.setIntentos(nuevosIntentos);
+                usuario.setUltimaVez(ahora);
+                usuarioDAO.actualizarIntentosYUltimaVez(usuario.getIdUsuario(), nuevosIntentos, ahora);
+                if (nuevosIntentos >= maxIntentos) {
+                    JOptionPane.showMessageDialog(null, "Usuario bloqueado por " + minutosBloqueo + " minutos.", "Usuario bloqueado", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Contraseña incorrecta. Intentos restantes: " + (maxIntentos - nuevosIntentos), "Error de Autenticación", JOptionPane.ERROR_MESSAGE);
+                }
                 return false;
             }
             

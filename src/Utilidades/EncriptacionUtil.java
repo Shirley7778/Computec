@@ -8,8 +8,6 @@ public class EncriptacionUtil {
     
     /**
      * Encripta una cadena usando SHA256
-     * @param input La cadena a encriptar
-     * @return La cadena encriptada en hexadecimal
      */
     public static String encriptarSHA256(String input) {
         try {
@@ -32,9 +30,6 @@ public class EncriptacionUtil {
     
     /**
      * Verifica si una contraseña coincide con su hash
-     * @param password La contraseña en texto plano
-     * @param hash El hash almacenado
-     * @return true si coinciden, false en caso contrario
      */
     public static boolean verificarPassword(String password, String hash) {
         String passwordHash = encriptarSHA256(password);

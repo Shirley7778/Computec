@@ -15,6 +15,9 @@ public class Form_Clientes extends javax.swing.JPanel {
      */
     public Form_Clientes() {
         initComponents();
+        setCamposHabilitados(false); // Deshabilitar campos al iniciar
+        configurarComboTipoEmpresa(); //  Configurar combo
+        cargarClientesEnTabla(); //  Mostrar todos los clientes al iniciar
     }
 
     /**
@@ -52,7 +55,6 @@ public class Form_Clientes extends javax.swing.JPanel {
         tbl_usuario = new javax.swing.JTable();
         btn_guardar = new javax.swing.JButton();
         btn_eliminar = new javax.swing.JButton();
-        btn_crear = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(51, 51, 51));
         setPreferredSize(new java.awt.Dimension(1128, 554));
@@ -64,6 +66,12 @@ public class Form_Clientes extends javax.swing.JPanel {
         jLabel1.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Personal de Contacto:");
+
+        txtPersonalContacto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPersonalContactoActionPerformed(evt);
+            }
+        });
 
         jLabel2.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
@@ -125,6 +133,11 @@ public class Form_Clientes extends javax.swing.JPanel {
         btn_nuevo.setForeground(new java.awt.Color(255, 255, 255));
         btn_nuevo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/Nuevo1.png"))); // NOI18N
         btn_nuevo.setText("Nuevo");
+        btn_nuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_nuevoActionPerformed(evt);
+            }
+        });
 
         tbl_usuario.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -161,87 +174,76 @@ public class Form_Clientes extends javax.swing.JPanel {
             }
         });
 
-        btn_crear.setBackground(new java.awt.Color(25, 25, 25));
-        btn_crear.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
-        btn_crear.setForeground(new java.awt.Color(255, 255, 255));
-        btn_crear.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/Crear.png"))); // NOI18N
-        btn_crear.setText("Crear");
-        btn_crear.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_crearActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel9)
-                .addGap(458, 458, 458))
             .addGroup(layout.createSequentialGroup()
-                .addGap(31, 31, 31)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel10)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btn_crear, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btn_nuevo)
-                        .addGap(62, 62, 62)
-                        .addComponent(btn_guardar)
-                        .addGap(70, 70, 70)
-                        .addComponent(btn_eliminar))
-                    .addComponent(lbl_ingresarDNI)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addGap(18, 18, 18)
-                                .addComponent(cmbTipoEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel6)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtCiudad))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtPersonalContacto, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel2)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtRuc, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 18, 18)
+                        .addGap(31, 31, 31)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(btn_nuevo)
+                                .addGap(62, 62, 62)
+                                .addComponent(btn_guardar)
+                                .addGap(70, 70, 70)
+                                .addComponent(btn_eliminar))
+                            .addComponent(lbl_ingresarDNI)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel7)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel5)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(cmbTipoEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel6)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtCiudad, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel1)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txtPersonalContacto, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jLabel2)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txtRuc, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel3)))
                                 .addGap(18, 18, 18)
-                                .addComponent(txtCodigoPostal, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addComponent(txt_buscarDni))
-                .addContainerGap(16, Short.MAX_VALUE))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(txtEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jLabel4)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel7)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtCodigoPostal, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(txt_buscarDni, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1077, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel10)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(448, 448, 448)
+                        .addComponent(jLabel9)))
+                .addContainerGap(12, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(16, 16, 16)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel9)
-                .addGap(20, 20, 20)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(txtPersonalContacto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -259,19 +261,18 @@ public class Form_Clientes extends javax.swing.JPanel {
                     .addComponent(txtCiudad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7)
                     .addComponent(txtCodigoPostal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(30, 30, 30)
+                .addGap(33, 33, 33)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(txtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10)
-                    .addComponent(txtCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_crear))
-                .addGap(32, 32, 32)
+                    .addComponent(txtCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(35, 35, 35)
                 .addComponent(lbl_ingresarDNI)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(txt_buscarDni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
                 .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_nuevo)
@@ -289,25 +290,166 @@ public class Form_Clientes extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_cmbTipoEmpresaActionPerformed
 
-    private void txt_buscarDniActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_buscarDniActionPerformed
+    // Método para habilitar/deshabilitar campos
+    private void setCamposHabilitados(boolean habilitado) {
+        txtPersonalContacto.setEnabled(habilitado);
+        txtRuc.setEnabled(habilitado);
+        txtEmpresa.setEnabled(habilitado);
+        txtTelefono.setEnabled(habilitado);
+        cmbTipoEmpresa.setEnabled(habilitado);
+        txtCiudad.setEnabled(habilitado);
+        txtCodigoPostal.setEnabled(habilitado);
+        txtDireccion.setEnabled(habilitado);
+        txtCorreo.setEnabled(habilitado);
+    }
 
-    }//GEN-LAST:event_txt_buscarDniActionPerformed
+    // Configurar el combo con las opciones correctas
+    private void configurarComboTipoEmpresa() {
+        cmbTipoEmpresa.removeAllItems();
+        cmbTipoEmpresa.addItem("Corporativo");
+        cmbTipoEmpresa.addItem("Distribuidor");
+        cmbTipoEmpresa.addItem("Minorista");
+    }
 
-    private void btn_guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_guardarActionPerformed
+    //  Limpiar los campos
+    private void limpiarCampos() {
+        txtPersonalContacto.setText("");
+        txtRuc.setText("");
+        txtEmpresa.setText("");
+        txtTelefono.setText("");
+        cmbTipoEmpresa.setSelectedIndex(-1);
+        txtCiudad.setText("");
+        txtCodigoPostal.setText("");
+        txtDireccion.setText("");
+        txtCorreo.setText("");
+    }
 
-    }//GEN-LAST:event_btn_guardarActionPerformed
+    //  Cargar todos los clientes en la tabla
+    private void cargarClientesEnTabla() {
+        try {
+            javax.swing.table.DefaultTableModel modelo = new javax.swing.table.DefaultTableModel(
+                new Object[][]{},
+                new String[]{"RUC/DNI", "Tipo Empresa", "Ciudad", "Empresa", "Código Postal", "Dirección", "Correo", "Teléfono", "Personal Contacto"}
+            );
+            DAO.ClienteDAO clienteDAO = DAO.DAOFactory.getClienteDAO();
+            java.util.List<Modelo.Cliente> clientes = clienteDAO.findAll();
+            for (Modelo.Cliente c : clientes) {
+                modelo.addRow(new Object[]{
+                    c.getRucDni(),
+                    c.getTipoEmpresa(),
+                    c.getCiudad(),
+                    c.getNombreEmpresa(),
+                    c.getCodigoPostal(),
+                    c.getDireccion(),
+                    c.getCorreo(),
+                    c.getTelefonoContacto(),
+                    c.getPersonalContacto()
+                });
+            }
+            tbl_usuario.setModel(modelo);
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Error al cargar clientes: " + e.getMessage());
+        }
+    }
 
-    private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
+    // Buscar cliente por RUC/DNI
+    private void buscarClientePorRucDni(String rucDni) {
+        try {
+            javax.swing.table.DefaultTableModel modelo = new javax.swing.table.DefaultTableModel(
+                new Object[][]{},
+                new String[]{"RUC/DNI", "Tipo Empresa", "Ciudad", "Empresa", "Código Postal", "Dirección", "Correo", "Teléfono", "Personal Contacto"}
+            );
+            DAO.ClienteDAO clienteDAO = DAO.DAOFactory.getClienteDAO();
+            java.util.List<Modelo.Cliente> clientes = clienteDAO.findAll();
+            for (Modelo.Cliente c : clientes) {
+                if (c.getRucDni().equalsIgnoreCase(rucDni)) {
+                    modelo.addRow(new Object[]{
+                        c.getRucDni(),
+                        c.getTipoEmpresa(),
+                        c.getCiudad(),
+                        c.getNombreEmpresa(),
+                        c.getCodigoPostal(),
+                        c.getDireccion(),
+                        c.getCorreo(),
+                        c.getTelefonoContacto(),
+                        c.getPersonalContacto()
+                    });
+                }
+            }
+            tbl_usuario.setModel(modelo);
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Error al buscar cliente: " + e.getMessage());
+        }
+    }
 
-    }//GEN-LAST:event_btn_eliminarActionPerformed
+ 
 
-    private void btn_crearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_crearActionPerformed
+    //  Evento btn_guardar
+    private void btn_guardarActionPerformed(java.awt.event.ActionEvent evt) {
+        try {
+            Modelo.Cliente cliente = new Modelo.Cliente();
+            cliente.setRucDni(txtRuc.getText());
+            cliente.setTipoEmpresa((String) cmbTipoEmpresa.getSelectedItem());
+            cliente.setCiudad(txtCiudad.getText());
+            cliente.setNombreEmpresa(txtEmpresa.getText());
+            cliente.setCodigoPostal(txtCodigoPostal.getText());
+            cliente.setDireccion(txtDireccion.getText());
+            cliente.setCorreo(txtCorreo.getText());
+            cliente.setTelefonoContacto(txtTelefono.getText());
+            cliente.setPersonalContacto(txtPersonalContacto.getText());
+            DAO.ClienteDAO clienteDAO = DAO.DAOFactory.getClienteDAO();
+            clienteDAO.create(cliente);
+            javax.swing.JOptionPane.showMessageDialog(this, "Cliente guardado correctamente");
+            setCamposHabilitados(false);
+            limpiarCampos();
+            cargarClientesEnTabla();
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Error al guardar cliente: " + e.getMessage());
+        }
+    }
 
-    }//GEN-LAST:event_btn_crearActionPerformed
+    // Evento btn_eliminar
+    private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {
+        int fila = tbl_usuario.getSelectedRow();
+        if (fila >= 0) {
+            String rucDni = (String) tbl_usuario.getValueAt(fila, 0);
+            try {
+                DAO.ClienteDAO clienteDAO = DAO.DAOFactory.getClienteDAO();
+                Modelo.Cliente cliente = clienteDAO.findByRucDni(rucDni);
+                if (cliente != null) {
+                    clienteDAO.setEstadoInactivo(cliente.getIdCliente());
+                    javax.swing.JOptionPane.showMessageDialog(this, "Cliente marcado como inactivo correctamente");
+                    cargarClientesEnTabla();
+                }
+            } catch (Exception e) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Error al marcar cliente como inactivo: " + e.getMessage());
+            }
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Seleccione un cliente para eliminar");
+        }
+    }
+
+    //  Evento buscar por RUC/DNI
+    private void txt_buscarDniActionPerformed(java.awt.event.ActionEvent evt) {
+        String rucDni = txt_buscarDni.getText();
+        if (!rucDni.trim().isEmpty()) {
+            buscarClientePorRucDni(rucDni);
+        } else {
+            cargarClientesEnTabla();
+        }
+    }
+
+    private void txtPersonalContactoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPersonalContactoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPersonalContactoActionPerformed
+
+    private void btn_nuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_nuevoActionPerformed
+        setCamposHabilitados(true);
+        limpiarCampos();
+    }//GEN-LAST:event_btn_nuevoActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btn_crear;
     private javax.swing.JButton btn_eliminar;
     private javax.swing.JButton btn_guardar;
     private javax.swing.JButton btn_nuevo;
