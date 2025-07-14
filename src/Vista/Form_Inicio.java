@@ -13,7 +13,7 @@ import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 import Controlador.AuthController;
 import Modelo.Usuario;
-import Servicio.PedidoServicio;
+import Servicio.SistemaFacade;
 import Modelo.Pedido;
 import java.util.List;
 import java.math.BigDecimal;
@@ -27,11 +27,11 @@ public class Form_Inicio extends javax.swing.JPanel {
 
     DefaultTableModel modelo;
     Conexion conn = new Conexion();
-    private PedidoServicio pedidoServicio;
+    private SistemaFacade facade;
 
     public Form_Inicio() {
         initComponents();
-        pedidoServicio = new PedidoServicio();
+        facade = new SistemaFacade();
         lbl_fecha.setText(fecha()); //establecer la fecha 
         iniciarHora();//llamar al metodo para actualizar la hora 
         mostrarInformacionDelDia();
@@ -104,7 +104,7 @@ public class Form_Inicio extends javax.swing.JPanel {
 
         jLabel1.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Ventas realizadas del dia ");
+        jLabel1.setText("Pedidos Confirmados y Pendientes");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -199,25 +199,25 @@ public class Form_Inicio extends javax.swing.JPanel {
 
     //----------------------------------------------------
     //-------------------------------    
-    //METODO PARA MOSTRAR PEDIDOS CANCELADOS EN LA TABLA
+    //METODO PARA MOSTRAR PEDIDOS CONFIRMADOS Y PENDIENTES EN LA TABLA
     //-------------------------------
     void mostrarInformacionDelDia() {
         try {
-            // Configurar tabla para mostrar solo pedidos cancelados
-            String[] titulos = {"ID Pedido", "Cliente", "Fecha", "Total", "Estado"};
+            // Configurar tabla para mostrar pedidos confirmados y pendientes
+            String[] titulos = {"N° Pedido", "Cliente", "Fecha", "Total", "Estado"};
             modelo = new DefaultTableModel(null, titulos);
             tbl_Inicio.setModel(modelo);
             
-            // Obtener solo los pedidos cancelados del día
-            List<Pedido> pedidosCancelados = pedidoServicio.obtenerPedidosCanceladosDelDia();
+            // Obtener pedidos confirmados y pendientes
+            List<Pedido> pedidosConfirmadosYPendientes = facade.obtenerPedidosConfirmadosYPendientes();
             
             // Formato para la fecha
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
             
-            // Llenar la tabla con los pedidos cancelados
-            for (Pedido pedido : pedidosCancelados) {
+            // Llenar la tabla con los pedidos confirmados y pendientes
+            for (Pedido pedido : pedidosConfirmadosYPendientes) {
                 Object[] fila = new Object[5];
-                fila[0] = pedido.getIdPedido();
+                fila[0] = pedido.getNumeroPedido();
                 fila[1] = pedido.getCliente().getNombreEmpresa() != null ? 
                          pedido.getCliente().getNombreEmpresa() : 
                          pedido.getCliente().getRucDni();
@@ -229,8 +229,8 @@ public class Form_Inicio extends javax.swing.JPanel {
             }
             
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error al cargar los pedidos cancelados: " + e.getMessage());
-            System.out.println("Error al cargar los pedidos cancelados: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al cargar los pedidos: " + e.getMessage());
+            System.out.println("Error al cargar los pedidos: " + e.getMessage());
         }
     }
     

@@ -11,11 +11,12 @@ public class Pedido {
     private BigDecimal igv;
     private BigDecimal total;
     private String estado;
+    private String numeroPedido;
 
     public Pedido() {}
 
     public Pedido(long idPedido, Cliente cliente, LocalDateTime fecha,
-                  BigDecimal subtotal, BigDecimal igv, BigDecimal total, String estado) {
+                  BigDecimal subtotal, BigDecimal igv, BigDecimal total, String estado, String numeroPedido) {
         this.idPedido = idPedido;
         this.cliente = cliente;
         this.fecha = fecha;
@@ -23,6 +24,7 @@ public class Pedido {
         this.igv = igv;
         this.total = total;
         this.estado = estado;
+        this.numeroPedido = numeroPedido;
     }
 
     public long getIdPedido() {
@@ -79,5 +81,13 @@ public class Pedido {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public String getNumeroPedido() {
+        return numeroPedido;
+    }
+
+    public void setNumeroPedido(String numeroPedido) {
+        this.numeroPedido = numeroPedido;
     }
 }

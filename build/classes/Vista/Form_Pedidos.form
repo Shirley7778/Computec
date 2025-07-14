@@ -39,14 +39,14 @@
                   <Group type="102" attributes="0">
                       <EmptySpace min="-2" pref="673" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="btn_guardar" max="32767" attributes="0"/>
+                          <Component id="btn_ver" max="32767" attributes="0"/>
                           <Component id="btn_eliminar" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="btn_crear" pref="211" max="32767" attributes="0"/>
-                          <Component id="btn_crear3" max="32767" attributes="0"/>
-                          <Component id="btn_crear2" alignment="1" max="32767" attributes="0"/>
+                          <Component id="btn_confirmarPago" pref="211" max="32767" attributes="0"/>
+                          <Component id="btn_agregar" max="32767" attributes="0"/>
+                          <Component id="btn_generarBoleta" alignment="1" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
@@ -67,15 +67,15 @@
               <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
               <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="btn_crear3" min="-2" max="-2" attributes="0"/>
+              <Component id="btn_agregar" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="btn_crear" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="btn_guardar" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btn_confirmarPago" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btn_ver" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="btn_crear2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btn_generarBoleta" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btn_eliminar" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -90,7 +90,7 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JButton" name="btn_crear3">
+    <Component class="javax.swing.JButton" name="btn_agregar">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="19" green="19" red="19" type="rgb"/>
@@ -107,10 +107,10 @@
         <Property name="text" type="java.lang.String" value="Agregar Pedido"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_crear3ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_agregarActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btn_crear">
+    <Component class="javax.swing.JButton" name="btn_confirmarPago">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="19" green="19" red="19" type="rgb"/>
@@ -127,10 +127,10 @@
         <Property name="text" type="java.lang.String" value="Confirmar Pago"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_crearActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_confirmarPagoActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btn_crear2">
+    <Component class="javax.swing.JButton" name="btn_generarBoleta">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="19" green="19" red="19" type="rgb"/>
@@ -147,10 +147,10 @@
         <Property name="text" type="java.lang.String" value="Generar Boleta"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_crear2ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_generarBoletaActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btn_guardar">
+    <Component class="javax.swing.JButton" name="btn_ver">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="19" green="19" red="19" type="rgb"/>
@@ -164,10 +164,10 @@
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
           <Image iconType="3" name="/Iconos/Guardar.png"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Editar"/>
+        <Property name="text" type="java.lang.String" value="Ver"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_guardarActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_verActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btn_eliminar">
@@ -224,7 +224,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTable" name="tbl_usuario">
+        <Component class="javax.swing.JTable" name="tbl_pedido">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="4" rowCount="4">
