@@ -17,8 +17,23 @@ public class StockDAOImpl implements StockDAO {
     }
 
     @Override
-    public Stock findById(long id) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Stock findById(long productoId) throws Exception {
+        String sql = "SELECT * FROM stock WHERE producto_id = ?";
+        try (java.sql.Connection cn = conexion.conectar();
+             java.sql.PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setLong(1, productoId);
+            try (java.sql.ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Modelo.Stock stock = new Modelo.Stock();
+                    stock.setStockId(rs.getLong("stock_id"));
+                    // Relacionar producto si es necesario
+                    stock.setCantidadActual(rs.getInt("cantidad_actual"));
+                    stock.setMinimo(rs.getInt("minimo"));
+                    return stock;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -28,7 +43,14 @@ public class StockDAOImpl implements StockDAO {
 
     @Override
     public void update(Stock s) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet.");
+        String sql = "UPDATE stock SET cantidad_actual = ?, minimo = ? WHERE stock_id = ?";
+        try (java.sql.Connection cn = conexion.conectar();
+             java.sql.PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, s.getCantidadActual());
+            ps.setInt(2, s.getMinimo());
+            ps.setLong(3, s.getStockId());
+            ps.executeUpdate();
+        }
     }
 
     @Override
@@ -49,7 +71,7 @@ public class StockDAOImpl implements StockDAO {
         }
         return null;
     }
-
+    
     private Stock map(java.sql.ResultSet rs) throws java.sql.SQLException {
         Stock stock = new Stock();
         stock.setStockId(rs.getLong("stock_id"));

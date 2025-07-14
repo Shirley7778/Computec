@@ -4,17 +4,46 @@
  */
 package Vista;
 
-/**
- *
- * @author SHIRLEY
- */
+import Servicio.SistemaFacade;
+import Modelo.Pedido;
+import Modelo.DetallePedido;
+import javax.swing.table.DefaultTableModel;
+import java.util.List;
+import javax.swing.JOptionPane;
+import Vista.Form_Pedidos1;
+import javax.swing.JDialog;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Cell;
+import javax.swing.JFileChooser;
+import java.io.File;
+import java.time.format.DateTimeFormatter;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
+
+import java.awt.Desktop;
+
 public class Form_Pedidos extends javax.swing.JPanel {
 
     /**
      * Creates new form JPanel_Pedidos
      */
+    
+    private List<Pedido> pedidosGlobal = new java.util.ArrayList<>();
+    private SistemaFacade facade = new SistemaFacade();
+    
     public Form_Pedidos() {
         initComponents();
+        initComponents();
+        cargarTablaPedidos();
+        actualizarBotones();
+        tbl_pedido.getSelectionModel().addListSelectionListener(e -> actualizarBotones());
     }
 
     /**
@@ -26,60 +55,60 @@ public class Form_Pedidos extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        btn_crear3 = new javax.swing.JButton();
-        btn_crear = new javax.swing.JButton();
-        btn_crear2 = new javax.swing.JButton();
-        btn_guardar = new javax.swing.JButton();
+        btn_agregar = new javax.swing.JButton();
+        btn_confirmarPago = new javax.swing.JButton();
+        btn_generarBoleta = new javax.swing.JButton();
+        btn_ver = new javax.swing.JButton();
         btn_eliminar = new javax.swing.JButton();
         jLabel9 = new javax.swing.JLabel();
         lbl_ingresarDNI = new javax.swing.JLabel();
         txt_buscarDni = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tbl_usuario = new javax.swing.JTable();
+        tbl_pedido = new javax.swing.JTable();
 
         setBackground(new java.awt.Color(51, 51, 51));
 
-        btn_crear3.setBackground(new java.awt.Color(25, 25, 25));
-        btn_crear3.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
-        btn_crear3.setForeground(new java.awt.Color(255, 255, 255));
-        btn_crear3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/Crear.png"))); // NOI18N
-        btn_crear3.setText("Agregar Pedido");
-        btn_crear3.addActionListener(new java.awt.event.ActionListener() {
+        btn_agregar.setBackground(new java.awt.Color(25, 25, 25));
+        btn_agregar.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
+        btn_agregar.setForeground(new java.awt.Color(255, 255, 255));
+        btn_agregar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/Crear.png"))); // NOI18N
+        btn_agregar.setText("Agregar Pedido");
+        btn_agregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_crear3ActionPerformed(evt);
+                btn_agregarActionPerformed(evt);
             }
         });
 
-        btn_crear.setBackground(new java.awt.Color(25, 25, 25));
-        btn_crear.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
-        btn_crear.setForeground(new java.awt.Color(255, 255, 255));
-        btn_crear.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/5.png"))); // NOI18N
-        btn_crear.setText("Confirmar Pago");
-        btn_crear.addActionListener(new java.awt.event.ActionListener() {
+        btn_confirmarPago.setBackground(new java.awt.Color(25, 25, 25));
+        btn_confirmarPago.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
+        btn_confirmarPago.setForeground(new java.awt.Color(255, 255, 255));
+        btn_confirmarPago.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/5.png"))); // NOI18N
+        btn_confirmarPago.setText("Confirmar Pago");
+        btn_confirmarPago.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_crearActionPerformed(evt);
+                btn_confirmarPagoActionPerformed(evt);
             }
         });
 
-        btn_crear2.setBackground(new java.awt.Color(25, 25, 25));
-        btn_crear2.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
-        btn_crear2.setForeground(new java.awt.Color(255, 255, 255));
-        btn_crear2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/Reporte.png"))); // NOI18N
-        btn_crear2.setText("Generar Boleta");
-        btn_crear2.addActionListener(new java.awt.event.ActionListener() {
+        btn_generarBoleta.setBackground(new java.awt.Color(25, 25, 25));
+        btn_generarBoleta.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
+        btn_generarBoleta.setForeground(new java.awt.Color(255, 255, 255));
+        btn_generarBoleta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/Reporte.png"))); // NOI18N
+        btn_generarBoleta.setText("Generar Boleta");
+        btn_generarBoleta.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_crear2ActionPerformed(evt);
+                btn_generarBoletaActionPerformed(evt);
             }
         });
 
-        btn_guardar.setBackground(new java.awt.Color(25, 25, 25));
-        btn_guardar.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
-        btn_guardar.setForeground(new java.awt.Color(255, 255, 255));
-        btn_guardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/Guardar.png"))); // NOI18N
-        btn_guardar.setText("Editar");
-        btn_guardar.addActionListener(new java.awt.event.ActionListener() {
+        btn_ver.setBackground(new java.awt.Color(25, 25, 25));
+        btn_ver.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
+        btn_ver.setForeground(new java.awt.Color(255, 255, 255));
+        btn_ver.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/Guardar.png"))); // NOI18N
+        btn_ver.setText("Ver");
+        btn_ver.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_guardarActionPerformed(evt);
+                btn_verActionPerformed(evt);
             }
         });
 
@@ -108,7 +137,7 @@ public class Form_Pedidos extends javax.swing.JPanel {
             }
         });
 
-        tbl_usuario.setModel(new javax.swing.table.DefaultTableModel(
+        tbl_pedido.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -119,7 +148,7 @@ public class Form_Pedidos extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(tbl_usuario);
+        jScrollPane1.setViewportView(tbl_pedido);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -139,13 +168,13 @@ public class Form_Pedidos extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(673, 673, 673)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btn_guardar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btn_ver, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btn_eliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(52, 52, 52)
+                        .addGap(46, 46, 46)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btn_crear, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
-                            .addComponent(btn_crear3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btn_crear2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(btn_confirmarPago, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                            .addComponent(btn_agregar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btn_generarBoleta, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -159,14 +188,14 @@ public class Form_Pedidos extends javax.swing.JPanel {
                 .addGap(32, 32, 32)
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_crear3)
+                .addComponent(btn_agregar)
                 .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_crear)
-                    .addComponent(btn_guardar))
+                    .addComponent(btn_confirmarPago)
+                    .addComponent(btn_ver))
                 .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_crear2)
+                    .addComponent(btn_generarBoleta)
                     .addComponent(btn_eliminar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbl_ingresarDNI)
@@ -178,41 +207,279 @@ public class Form_Pedidos extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btn_crear3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_crear3ActionPerformed
+    private void btn_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btn_crear3ActionPerformed
+        javax.swing.JFrame topFrame = (javax.swing.JFrame) javax.swing.SwingUtilities.getWindowAncestor(this);
+        Form_Pedidos1 panelDetalle = new Form_Pedidos1();
+        JDialog dialog = new JDialog(topFrame, "Detalle de Pedido", true);
+        dialog.getContentPane().add(panelDetalle);
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+        cargarTablaPedidos();
+    }//GEN-LAST:event_btn_agregarActionPerformed
 
-    private void btn_crearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_crearActionPerformed
+    private void btn_confirmarPagoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_confirmarPagoActionPerformed
+        int fila = tbl_pedido.getSelectedRow();
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(this, "Seleccione un pedido para confirmar pago.");
+            return;
+        }
+        Object valor = tbl_pedido.getValueAt(fila, 0);
+        String numeroPedido = valor.toString();
+        try {
+            // ✅ CORRECTO: Usando Facade en lugar de DAOFactory directamente
+            Pedido pedido = null;
+            for (Pedido p : pedidosGlobal) {
+                if (p.getNumeroPedido() != null && p.getNumeroPedido().equals(numeroPedido)) {
+                    pedido = p;
+                    break;
+                }
+            }
+            if (pedido != null) {
+                pedido.setEstado("Confirmado");
+                facade.actualizarPedido(pedido);
+                cargarTablaPedidos();
+                JOptionPane.showMessageDialog(this, "Estado de pedido actualizado a 'Confirmado'.");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al actualizar estado: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btn_confirmarPagoActionPerformed
 
-    }//GEN-LAST:event_btn_crearActionPerformed
-
-    private void btn_crear2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_crear2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_crear2ActionPerformed
-
-    private void btn_guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_guardarActionPerformed
-
-    }//GEN-LAST:event_btn_guardarActionPerformed
+    private void btn_generarBoletaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_generarBoletaActionPerformed
+        int fila = tbl_pedido.getSelectedRow();
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(this, "Seleccione una venta para generar la boleta.");
+            return;
+        }
+        Object valor = tbl_pedido.getValueAt(fila, 0);
+        String numeroPedido = valor.toString();
+        Pedido pedidoSeleccionado = null;
+        for (Pedido p : pedidosGlobal) {
+            if (p.getNumeroPedido() != null && p.getNumeroPedido().equals(numeroPedido)) {
+                pedidoSeleccionado = p;
+                break;
+            }
+        }
+        if (pedidoSeleccionado == null) {
+            JOptionPane.showMessageDialog(this, "No se encontró el pedido seleccionado.");
+            return;
+        }
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Guardar Boleta como PDF");
+        fileChooser.setSelectedFile(new File("boleta_pedido_" + pedidoSeleccionado.getNumeroPedido() + ".pdf"));
+        int userSelection = fileChooser.showSaveDialog(this);
+        if (userSelection != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+        File fileToSave = fileChooser.getSelectedFile();
+        try {
+            PdfWriter writer = new PdfWriter(fileToSave.getAbsolutePath());
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf);
+            PdfFont boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
+            PdfFont normalFont = PdfFontFactory.createFont(StandardFonts.HELVETICA);
+            document.add(new Paragraph("Boleta de Venta").setFont(boldFont).setFontSize(18).setTextAlignment(TextAlignment.CENTER));
+            document.add(new Paragraph("Número de Pedido: " + pedidoSeleccionado.getNumeroPedido()).setFont(normalFont));
+            document.add(new Paragraph("Cliente: " + (pedidoSeleccionado.getCliente().getNombreEmpresa() != null ? pedidoSeleccionado.getCliente().getNombreEmpresa() : pedidoSeleccionado.getCliente().getRucDni())).setFont(normalFont));
+            document.add(new Paragraph("Fecha: " + pedidoSeleccionado.getFecha().toString()).setFont(normalFont));
+            document.add(new Paragraph(" "));
+            Table table = new Table(UnitValue.createPercentArray(new float[]{4, 2, 2, 2})).useAllAvailableWidth();
+            table.addHeaderCell(new Cell().add(new Paragraph("Producto").setFont(boldFont)).setTextAlignment(TextAlignment.CENTER));
+            table.addHeaderCell(new Cell().add(new Paragraph("Cantidad").setFont(boldFont)).setTextAlignment(TextAlignment.CENTER));
+            table.addHeaderCell(new Cell().add(new Paragraph("Precio Unitario").setFont(boldFont)).setTextAlignment(TextAlignment.CENTER));
+            table.addHeaderCell(new Cell().add(new Paragraph("Total").setFont(boldFont)).setTextAlignment(TextAlignment.CENTER));
+            java.util.List<Modelo.DetallePedido> detalles = facade.obtenerDetallesPorPedidoId(pedidoSeleccionado.getIdPedido());
+            for (Modelo.DetallePedido d : detalles) {
+                table.addCell(new Cell().add(new Paragraph(d.getProducto().getNombre()).setFont(normalFont)).setTextAlignment(TextAlignment.LEFT));
+                table.addCell(new Cell().add(new Paragraph(String.valueOf(d.getCantidad())).setFont(normalFont)).setTextAlignment(TextAlignment.CENTER));
+                table.addCell(new Cell().add(new Paragraph(d.getPrecioUnitario().setScale(2, java.math.RoundingMode.HALF_UP).toString()).setFont(normalFont)).setTextAlignment(TextAlignment.RIGHT));
+                table.addCell(new Cell().add(new Paragraph(d.getTotal().setScale(2, java.math.RoundingMode.HALF_UP).toString()).setFont(normalFont)).setTextAlignment(TextAlignment.RIGHT));
+            }
+            document.add(table);
+            document.add(new Paragraph(" "));
+            document.add(new Paragraph("Subtotal: S/ " + pedidoSeleccionado.getSubtotal().setScale(2, java.math.RoundingMode.HALF_UP)).setTextAlignment(TextAlignment.RIGHT));
+            document.add(new Paragraph("IGV: S/ " + pedidoSeleccionado.getIgv().setScale(2, java.math.RoundingMode.HALF_UP)).setTextAlignment(TextAlignment.RIGHT));
+            document.add(new Paragraph("Total: S/ " + pedidoSeleccionado.getTotal().setScale(2, java.math.RoundingMode.HALF_UP)).setTextAlignment(TextAlignment.RIGHT));
+            document.close();
+            JOptionPane.showMessageDialog(this, "Boleta generada correctamente.");
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().open(fileToSave);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al generar boleta: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btn_generarBoletaActionPerformed
 
     private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
 
+        int fila = tbl_pedido.getSelectedRow();
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(this, "Seleccione un pedido para cancelar.");
+            return;
+        }
+        Object valor = tbl_pedido.getValueAt(fila, 0);
+        String numeroPedido = valor.toString();
+        int confirm = JOptionPane.showConfirmDialog(this, "¿Está seguro de cancelar el pedido?", "Confirmar Cancelación", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                // ✅ CORRECTO: Usando Facade en lugar de DAOFactory directamente
+                Pedido pedido = null;
+                for (Pedido p : pedidosGlobal) {
+                    if (p.getNumeroPedido() != null && p.getNumeroPedido().equals(numeroPedido)) {
+                        pedido = p;
+                        break;
+                    }
+                }
+                if (pedido != null) {
+                    // Obtener los detalles del pedido
+                    List<Modelo.DetallePedido> detalles = facade.obtenerDetallesPorPedidoId(pedido.getIdPedido());
+                    // Devolver el stock para cada producto del pedido
+                    for (Modelo.DetallePedido detalle : detalles) {
+                        Modelo.Stock stock = facade.obtenerStockPorProductoId(detalle.getProducto().getProductoId());
+                        if (stock != null) {
+                            int nuevaCantidad = stock.getCantidadActual() + detalle.getCantidad();
+                            stock.setCantidadActual(nuevaCantidad);
+                            facade.actualizarStock(stock);
+                        }
+                    }
+                    // Cambiar el estado del pedido a Cancelado
+                    pedido.setEstado("Cancelado");
+                    facade.actualizarPedido(pedido);
+                    cargarTablaPedidos();
+                    JOptionPane.showMessageDialog(this, "Pedido cancelado correctamente. Stock devuelto.");
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Error al cancelar pedido: " + e.getMessage());
+            }
+        }
     }//GEN-LAST:event_btn_eliminarActionPerformed
 
     private void txt_buscarDniActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_buscarDniActionPerformed
 
+        String ruc = txt_buscarDni.getText().trim();
+        if (ruc.isEmpty()) {
+            cargarTablaPedidos();
+            return;
+        }
+        String[] titulos = {"N° Pedido", "Nombre Empresa", "RUC/DNI", "Tipo Empresa", "Fecha", "Subtotal", "IGV", "Total", "Estado"};
+        DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+        tbl_pedido.setModel(modelo);
+        for (Pedido p : pedidosGlobal) {
+            if (p.getCliente().getRucDni().equalsIgnoreCase(ruc)) {
+                Object[] fila = new Object[9];
+                fila[0] = p.getNumeroPedido();
+                fila[1] = p.getCliente().getNombreEmpresa();
+                fila[2] = p.getCliente().getRucDni();
+                fila[3] = p.getCliente().getTipoEmpresa();
+                fila[4] = p.getFecha();
+                fila[5] = p.getSubtotal();
+                fila[6] = p.getIgv();
+                fila[7] = p.getTotal();
+                fila[8] = p.getEstado();
+                modelo.addRow(fila);
+            }
+        }
     }//GEN-LAST:event_txt_buscarDniActionPerformed
 
+    private void btn_verActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_verActionPerformed
+
+        int fila = tbl_pedido.getSelectedRow();
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(this, "Seleccione un pedido para ver.");
+            return;
+        }
+        Object valor = tbl_pedido.getValueAt(fila, 0);
+        String numeroPedido = valor.toString();
+        Pedido pedidoSeleccionado = null;
+        for (Pedido p : pedidosGlobal) {
+            if (p.getNumeroPedido() != null && p.getNumeroPedido().equals(numeroPedido)) {
+                pedidoSeleccionado = p;
+                break;
+            }
+        }
+        if (pedidoSeleccionado != null) {
+            javax.swing.JFrame topFrame = (javax.swing.JFrame) javax.swing.SwingUtilities.getWindowAncestor(this);
+            Form_Pedidos1 panelDetalle = new Form_Pedidos1(false, true); // modoVisualizacion = true
+            panelDetalle.cargarDatosPedido(pedidoSeleccionado);
+            javax.swing.JDialog dialog = new javax.swing.JDialog(topFrame, "Ver Pedido", true);
+            dialog.getContentPane().add(panelDetalle);
+            dialog.pack();
+            dialog.setLocationRelativeTo(this);
+            dialog.setVisible(true);
+        }
+    }//GEN-LAST:event_btn_verActionPerformed
+
+    private void cargarTablaPedidos() {
+        String[] titulos = {"N° Pedido", "Nombre Empresa", "RUC/DNI", "Tipo Empresa", "Fecha", "Subtotal", "IGV", "Total", "Estado"};
+        DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+        tbl_pedido.setModel(modelo);
+        try {
+            pedidosGlobal = facade.listarPedidos();
+            for (Pedido p : pedidosGlobal) {
+                Object[] fila = new Object[9];
+                fila[0] = p.getNumeroPedido();
+                fila[1] = p.getCliente().getNombreEmpresa();
+                fila[2] = p.getCliente().getRucDni();
+                fila[3] = p.getCliente().getTipoEmpresa();
+                fila[4] = p.getFecha();
+                fila[5] = p.getSubtotal();
+                fila[6] = p.getIgv();
+                fila[7] = p.getTotal();
+                fila[8] = p.getEstado();
+                modelo.addRow(fila);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al cargar pedidos: " + e.getMessage());
+        }
+        actualizarBotones();
+    }
+
+    private void actualizarBotones() {
+        int fila = tbl_pedido.getSelectedRow();
+        btn_agregar.setEnabled(true); // Siempre habilitado
+        if (fila == -1) {
+            btn_ver.setEnabled(true);
+            btn_eliminar.setEnabled(false);
+            btn_confirmarPago.setEnabled(false);
+            btn_generarBoleta.setEnabled(false);
+            return;
+        }
+        String estado = tbl_pedido.getValueAt(fila, 8).toString();
+        if (estado.equalsIgnoreCase("cancelado")) {
+            btn_ver.setEnabled(true);
+            btn_eliminar.setEnabled(false);
+            btn_confirmarPago.setEnabled(false);
+            btn_generarBoleta.setEnabled(false);
+        } else if (estado.equalsIgnoreCase("pendiente")) {
+            btn_ver.setEnabled(true);
+            btn_eliminar.setEnabled(true);
+            btn_confirmarPago.setEnabled(true);
+            btn_generarBoleta.setEnabled(false);
+        } else if (estado.equalsIgnoreCase("confirmado")) {
+            btn_ver.setEnabled(true);
+            btn_eliminar.setEnabled(false);
+            btn_confirmarPago.setEnabled(false);
+            btn_generarBoleta.setEnabled(true);
+        } else {
+            btn_ver.setEnabled(true);
+            btn_eliminar.setEnabled(false);
+            btn_confirmarPago.setEnabled(false);
+            btn_generarBoleta.setEnabled(false);
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btn_crear;
-    private javax.swing.JButton btn_crear2;
-    private javax.swing.JButton btn_crear3;
+    private javax.swing.JButton btn_agregar;
+    private javax.swing.JButton btn_confirmarPago;
     private javax.swing.JButton btn_eliminar;
-    private javax.swing.JButton btn_guardar;
+    private javax.swing.JButton btn_generarBoleta;
+    private javax.swing.JButton btn_ver;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lbl_ingresarDNI;
-    private javax.swing.JTable tbl_usuario;
+    private javax.swing.JTable tbl_pedido;
     private javax.swing.JTextField txt_buscarDni;
     // End of variables declaration//GEN-END:variables
 }

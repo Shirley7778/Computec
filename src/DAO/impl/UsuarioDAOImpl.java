@@ -134,6 +134,26 @@ public class UsuarioDAOImpl implements UsuarioDAO {
         }
     }
     
+    @Override
+    public List<Usuario> obtenerUsuariosPorRol(String rol) throws Exception {
+        String sql = "SELECT u.*, p.id_permiso, p.rol, p.acceso FROM usuarios u " +
+                    "INNER JOIN permisos p ON u.permiso_id = p.id_permiso " +
+                    "WHERE p.rol = ?";
+        
+        List<Usuario> usuarios = new ArrayList<>();
+        try (Connection conn = conexion.conectar();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, rol);
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                usuarios.add(mapearUsuario(rs));
+            }
+        }
+        return usuarios;
+    }
+    
     /**
      * Mapea un ResultSet a un objeto Usuario
      */

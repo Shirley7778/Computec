@@ -10,6 +10,9 @@ package Vista;
  */
 public class Form_Clientes extends javax.swing.JPanel {
 
+    private Modelo.Cliente clienteSeleccionado;
+    private boolean modoEdicion = false;
+
     /**
      * Creates new form JPanel_Clientes
      */
@@ -18,6 +21,7 @@ public class Form_Clientes extends javax.swing.JPanel {
         setCamposHabilitados(false); // Deshabilitar campos al iniciar
         configurarComboTipoEmpresa(); //  Configurar combo
         cargarClientesEnTabla(); //  Mostrar todos los clientes al iniciar
+        configurarSeleccionTabla(); // Configurar listener para selección de tabla
     }
 
     /**
@@ -331,8 +335,8 @@ public class Form_Clientes extends javax.swing.JPanel {
                 new Object[][]{},
                 new String[]{"RUC/DNI", "Tipo Empresa", "Ciudad", "Empresa", "Código Postal", "Dirección", "Correo", "Teléfono", "Personal Contacto"}
             );
-            DAO.ClienteDAO clienteDAO = DAO.DAOFactory.getClienteDAO();
-            java.util.List<Modelo.Cliente> clientes = clienteDAO.findAll();
+            Servicio.SistemaFacade facade = new Servicio.SistemaFacade();
+            java.util.List<Modelo.Cliente> clientes = facade.listarClientes();
             for (Modelo.Cliente c : clientes) {
                 modelo.addRow(new Object[]{
                     c.getRucDni(),
@@ -359,22 +363,20 @@ public class Form_Clientes extends javax.swing.JPanel {
                 new Object[][]{},
                 new String[]{"RUC/DNI", "Tipo Empresa", "Ciudad", "Empresa", "Código Postal", "Dirección", "Correo", "Teléfono", "Personal Contacto"}
             );
-            DAO.ClienteDAO clienteDAO = DAO.DAOFactory.getClienteDAO();
-            java.util.List<Modelo.Cliente> clientes = clienteDAO.findAll();
-            for (Modelo.Cliente c : clientes) {
-                if (c.getRucDni().equalsIgnoreCase(rucDni)) {
-                    modelo.addRow(new Object[]{
-                        c.getRucDni(),
-                        c.getTipoEmpresa(),
-                        c.getCiudad(),
-                        c.getNombreEmpresa(),
-                        c.getCodigoPostal(),
-                        c.getDireccion(),
-                        c.getCorreo(),
-                        c.getTelefonoContacto(),
-                        c.getPersonalContacto()
-                    });
-                }
+            Servicio.SistemaFacade facade = new Servicio.SistemaFacade();
+            Modelo.Cliente cliente = facade.buscarClientePorRucDni(rucDni);
+            if (cliente != null) {
+                modelo.addRow(new Object[]{
+                    cliente.getRucDni(),
+                    cliente.getTipoEmpresa(),
+                    cliente.getCiudad(),
+                    cliente.getNombreEmpresa(),
+                    cliente.getCodigoPostal(),
+                    cliente.getDireccion(),
+                    cliente.getCorreo(),
+                    cliente.getTelefonoContacto(),
+                    cliente.getPersonalContacto()
+                });
             }
             tbl_usuario.setModel(modelo);
         } catch (Exception e) {
@@ -387,25 +389,50 @@ public class Form_Clientes extends javax.swing.JPanel {
     //  Evento btn_guardar
     private void btn_guardarActionPerformed(java.awt.event.ActionEvent evt) {
         try {
-            Modelo.Cliente cliente = new Modelo.Cliente();
-            cliente.setRucDni(txtRuc.getText());
-            cliente.setTipoEmpresa((String) cmbTipoEmpresa.getSelectedItem());
-            cliente.setCiudad(txtCiudad.getText());
-            cliente.setNombreEmpresa(txtEmpresa.getText());
-            cliente.setCodigoPostal(txtCodigoPostal.getText());
-            cliente.setDireccion(txtDireccion.getText());
-            cliente.setCorreo(txtCorreo.getText());
-            cliente.setTelefonoContacto(txtTelefono.getText());
-            cliente.setPersonalContacto(txtPersonalContacto.getText());
-            DAO.ClienteDAO clienteDAO = DAO.DAOFactory.getClienteDAO();
-            clienteDAO.create(cliente);
-            javax.swing.JOptionPane.showMessageDialog(this, "Cliente guardado correctamente");
+            Servicio.SistemaFacade facade = new Servicio.SistemaFacade();
+            
+            if (modoEdicion && clienteSeleccionado != null) {
+                // Modo actualización
+                actualizarClienteDesdeCampos();
+                facade.actualizarCliente(clienteSeleccionado);
+                javax.swing.JOptionPane.showMessageDialog(this, "Cliente actualizado correctamente");
+            } else {
+                // Modo creación
+                Modelo.Cliente cliente = new Modelo.Cliente();
+                cliente.setRucDni(txtRuc.getText());
+                cliente.setTipoEmpresa((String) cmbTipoEmpresa.getSelectedItem());
+                cliente.setCiudad(txtCiudad.getText());
+                cliente.setNombreEmpresa(txtEmpresa.getText());
+                cliente.setCodigoPostal(txtCodigoPostal.getText());
+                cliente.setDireccion(txtDireccion.getText());
+                cliente.setCorreo(txtCorreo.getText());
+                cliente.setTelefonoContacto(txtTelefono.getText());
+                cliente.setPersonalContacto(txtPersonalContacto.getText());
+                facade.registrarCliente(cliente);
+                javax.swing.JOptionPane.showMessageDialog(this, "Cliente guardado correctamente");
+            }
+            
             setCamposHabilitados(false);
             limpiarCampos();
+            clienteSeleccionado = null;
+            modoEdicion = false;
             cargarClientesEnTabla();
         } catch (Exception e) {
             javax.swing.JOptionPane.showMessageDialog(this, "Error al guardar cliente: " + e.getMessage());
         }
+    }
+
+    // Actualizar cliente desde los campos del formulario
+    private void actualizarClienteDesdeCampos() {
+        clienteSeleccionado.setRucDni(txtRuc.getText());
+        clienteSeleccionado.setTipoEmpresa((String) cmbTipoEmpresa.getSelectedItem());
+        clienteSeleccionado.setCiudad(txtCiudad.getText());
+        clienteSeleccionado.setNombreEmpresa(txtEmpresa.getText());
+        clienteSeleccionado.setCodigoPostal(txtCodigoPostal.getText());
+        clienteSeleccionado.setDireccion(txtDireccion.getText());
+        clienteSeleccionado.setCorreo(txtCorreo.getText());
+        clienteSeleccionado.setTelefonoContacto(txtTelefono.getText());
+        clienteSeleccionado.setPersonalContacto(txtPersonalContacto.getText());
     }
 
     // Evento btn_eliminar
@@ -414,10 +441,10 @@ public class Form_Clientes extends javax.swing.JPanel {
         if (fila >= 0) {
             String rucDni = (String) tbl_usuario.getValueAt(fila, 0);
             try {
-                DAO.ClienteDAO clienteDAO = DAO.DAOFactory.getClienteDAO();
-                Modelo.Cliente cliente = clienteDAO.findByRucDni(rucDni);
+                Servicio.SistemaFacade facade = new Servicio.SistemaFacade();
+                Modelo.Cliente cliente = facade.buscarClientePorRucDni(rucDni);
                 if (cliente != null) {
-                    clienteDAO.setEstadoInactivo(cliente.getIdCliente());
+                    facade.marcarClienteComoInactivo(cliente.getIdCliente());
                     javax.swing.JOptionPane.showMessageDialog(this, "Cliente marcado como inactivo correctamente");
                     cargarClientesEnTabla();
                 }
@@ -446,7 +473,49 @@ public class Form_Clientes extends javax.swing.JPanel {
     private void btn_nuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_nuevoActionPerformed
         setCamposHabilitados(true);
         limpiarCampos();
+        clienteSeleccionado = null;
+        modoEdicion = false;
     }//GEN-LAST:event_btn_nuevoActionPerformed
+
+    // Configurar listener para selección en tabla
+    private void configurarSeleccionTabla() {
+        tbl_usuario.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int fila = tbl_usuario.getSelectedRow();
+                if (fila != -1) {
+                    cargarClienteSeleccionado(fila);
+                }
+            }
+        });
+    }
+
+    // Cargar cliente seleccionado en los campos
+    private void cargarClienteSeleccionado(int fila) {
+        try {
+            String rucDni = (String) tbl_usuario.getValueAt(fila, 0);
+            Servicio.SistemaFacade facade = new Servicio.SistemaFacade();
+            clienteSeleccionado = facade.buscarClientePorRucDni(rucDni);
+            
+            if (clienteSeleccionado != null) {
+                // Cargar datos en los campos
+                txtRuc.setText(clienteSeleccionado.getRucDni());
+                cmbTipoEmpresa.setSelectedItem(clienteSeleccionado.getTipoEmpresa());
+                txtCiudad.setText(clienteSeleccionado.getCiudad());
+                txtEmpresa.setText(clienteSeleccionado.getNombreEmpresa());
+                txtCodigoPostal.setText(clienteSeleccionado.getCodigoPostal());
+                txtDireccion.setText(clienteSeleccionado.getDireccion());
+                txtCorreo.setText(clienteSeleccionado.getCorreo());
+                txtTelefono.setText(clienteSeleccionado.getTelefonoContacto());
+                txtPersonalContacto.setText(clienteSeleccionado.getPersonalContacto());
+                
+                // Habilitar campos para edición
+                setCamposHabilitados(true);
+                modoEdicion = true;
+            }
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Error al cargar cliente: " + e.getMessage());
+        }
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

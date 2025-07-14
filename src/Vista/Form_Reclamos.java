@@ -1,22 +1,244 @@
 package Vista;
 
-import ConexionBD.Conexion;
+import Servicio.SistemaFacade;
+import Modelo.Reclamo;
+import Modelo.Cliente;
+import Modelo.Pedido;
+import Modelo.Usuario;
 import javax.swing.JOptionPane;
-import java.sql.*;
-import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableRowSorter;
+import java.util.List;
+import java.util.ArrayList;
+import java.time.LocalDate;
+import java.util.Date;
 
 public class Form_Reclamos extends javax.swing.JPanel {
 
-    /**
-     * Creates new form Form_Empleado
-     */
+    private SistemaFacade facade;
+    private List<Cliente> clientes;
+    private List<Pedido> pedidosConfirmados;
+    private List<Usuario> usuariosSoporte;
+    private List<Reclamo> reclamosGlobal;
+    private Reclamo reclamoSeleccionado;
+    private boolean modoEdicion = false;
+
     public Form_Reclamos() {
         initComponents();
+        facade = new SistemaFacade();
+        inicializarFormulario();
+        cargarTablaReclamos();
+        deshabilitarCampos();
+    }
 
+    private void inicializarFormulario() {
+        try {
+            // Cargar clientes
+            clientes = facade.listarClientes();
+            cmbCliente.removeAllItems();
+            cmbCliente.addItem("--Seleccione--");
+            for (Cliente cliente : clientes) {
+                cmbCliente.addItem(cliente.getNombreEmpresa() != null ? 
+                    cliente.getNombreEmpresa() : cliente.getRucDni());
+            }
 
+            // Cargar usuarios con rol soporte
+            usuariosSoporte = facade.obtenerUsuariosSoporte();
+            cmbAsignar.removeAllItems();
+            cmbAsignar.addItem("--Seleccione--");
+            for (Usuario usuario : usuariosSoporte) {
+                cmbAsignar.addItem(usuario.getNombre() + " " + usuario.getApellido());
+            }
 
+            // Configurar listeners
+            configurarListeners();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al inicializar formulario: " + e.getMessage());
+        }
+    }
+
+    private void configurarListeners() {
+        // Listener para cmbCliente
+        cmbCliente.addActionListener(e -> {
+            if (cmbCliente.getSelectedIndex() > 0) {
+                Cliente clienteSeleccionado = clientes.get(cmbCliente.getSelectedIndex() - 1);
+                txtRuc.setText(clienteSeleccionado.getRucDni());
+                cargarPedidosConfirmados(clienteSeleccionado.getIdCliente());
+            } else {
+                txtRuc.setText("");
+                cmbNumeroPedido.removeAllItems();
+                cmbNumeroPedido.addItem("--Seleccione--");
+            }
+        });
+
+        // Listener para selección en tabla
+        tbl_reclamo.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int fila = tbl_reclamo.getSelectedRow();
+                if (fila != -1) {
+                    cargarReclamoSeleccionado(fila);
+                }
+            }
+        });
+    }
+
+    private void cargarPedidosConfirmados(long clienteId) {
+        try {
+            pedidosConfirmados = facade.obtenerPedidosConfirmadosPorCliente(clienteId);
+            cmbNumeroPedido.removeAllItems();
+            cmbNumeroPedido.addItem("--Seleccione--");
+            for (Pedido pedido : pedidosConfirmados) {
+                cmbNumeroPedido.addItem(pedido.getNumeroPedido());
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al cargar pedidos: " + e.getMessage());
+        }
+    }
+
+    private void cargarTablaReclamos() {
+        try {
+            String[] titulos = {"ID", "Cliente", "N° Pedido", "Tipo", "Prioridad", "Estado", "Asignado a", "Fecha Vencimiento"};
+            DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+            tbl_reclamo.setModel(modelo);
+
+            reclamosGlobal = facade.listarReclamos();
+            for (Reclamo reclamo : reclamosGlobal) {
+                Object[] fila = new Object[8];
+                fila[0] = reclamo.getReclamoId();
+                fila[1] = reclamo.getCliente().getNombreEmpresa() != null ? 
+                    reclamo.getCliente().getNombreEmpresa() : reclamo.getCliente().getRucDni();
+                fila[2] = reclamo.getPedido() != null ? reclamo.getPedido().getNumeroPedido() : "N/A";
+                fila[3] = reclamo.getTipo();
+                fila[4] = reclamo.getPrioridad();
+                fila[5] = reclamo.getEstado();
+                fila[6] = reclamo.getUsuario().getNombre() + " " + reclamo.getUsuario().getApellido();
+                fila[7] = reclamo.getFechaVencimiento() != null ? reclamo.getFechaVencimiento().toString() : "N/A";
+                modelo.addRow(fila);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al cargar reclamos: " + e.getMessage());
+        }
+    }
+
+    private void cargarReclamoSeleccionado(int fila) {
+        try {
+            long reclamoId = (Long) tbl_reclamo.getValueAt(fila, 0);
+            reclamoSeleccionado = facade.obtenerReclamoPorId(reclamoId);
+            
+            if (reclamoSeleccionado != null) {
+                // Cargar cliente
+                for (int i = 0; i < cmbCliente.getItemCount(); i++) {
+                    String item = cmbCliente.getItemAt(i);
+                    if (item.equals(reclamoSeleccionado.getCliente().getNombreEmpresa() != null ? 
+                        reclamoSeleccionado.getCliente().getNombreEmpresa() : 
+                        reclamoSeleccionado.getCliente().getRucDni())) {
+                        cmbCliente.setSelectedIndex(i);
+                        break;
+                    }
+                }
+                
+                txtRuc.setText(reclamoSeleccionado.getCliente().getRucDni());
+                
+                // Cargar pedido si existe
+                if (reclamoSeleccionado.getPedido() != null) {
+                    cargarPedidosConfirmados(reclamoSeleccionado.getCliente().getIdCliente());
+                    for (int i = 0; i < cmbNumeroPedido.getItemCount(); i++) {
+                        if (cmbNumeroPedido.getItemAt(i).equals(reclamoSeleccionado.getPedido().getNumeroPedido())) {
+                            cmbNumeroPedido.setSelectedIndex(i);
+                            break;
+                        }
+                    }
+                }
+                
+                // Cargar tipo de reclamo
+                cmbTipoReclamo.setSelectedItem(reclamoSeleccionado.getTipo());
+                
+                // Cargar prioridad
+                cmbPrioridad.setSelectedItem(reclamoSeleccionado.getPrioridad());
+                
+                // Cargar estado
+                cmbEstado.setSelectedItem(reclamoSeleccionado.getEstado());
+                
+                // Cargar usuario asignado
+                for (int i = 0; i < cmbAsignar.getItemCount(); i++) {
+                    String item = cmbAsignar.getItemAt(i);
+                    if (item.equals(reclamoSeleccionado.getUsuario().getNombre() + " " + 
+                        reclamoSeleccionado.getUsuario().getApellido())) {
+                        cmbAsignar.setSelectedIndex(i);
+                        break;
+                    }
+                }
+                
+                // Cargar fecha de vencimiento
+                if (reclamoSeleccionado.getFechaVencimiento() != null) {
+                    dtcFechaVencimiento.setDate(Date.from(reclamoSeleccionado.getFechaVencimiento()
+                        .atStartOfDay(java.time.ZoneId.systemDefault()).toInstant()));
+                }
+                
+                // Cargar descripción
+                txtDescripcionProblema.setText(reclamoSeleccionado.getDescripcion());
+                
+                // Verificar si el reclamo está cerrado
+                if ("Cerrado".equals(reclamoSeleccionado.getEstado())) {
+                    modoEdicion = false;
+                    deshabilitarCampos();
+                    JOptionPane.showMessageDialog(this, 
+                        "Este reclamo está cerrado y no se puede editar.", 
+                        "Reclamo Cerrado", 
+                        JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    modoEdicion = true;
+                    habilitarCampos();
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al cargar reclamo: " + e.getMessage());
+        }
+    }
+
+    private void habilitarCampos() {
+        cmbCliente.setEnabled(true);
+        txtRuc.setEnabled(true);
+        btn_buscar.setEnabled(true);
+        cmbNumeroPedido.setEnabled(true);
+        cmbTipoReclamo.setEnabled(true);
+        cmbPrioridad.setEnabled(true);
+        cmbEstado.setEnabled(true);
+        dtcFechaVencimiento.setEnabled(true);
+        cmbAsignar.setEnabled(true);
+        txtDescripcionProblema.setEnabled(true);
+        btn_crear.setEnabled(true);
+        btn_guardar.setEnabled(modoEdicion);
+    }
+
+    private void deshabilitarCampos() {
+        cmbCliente.setEnabled(false);
+        txtRuc.setEnabled(false);
+        btn_buscar.setEnabled(false);
+        cmbNumeroPedido.setEnabled(false);
+        cmbTipoReclamo.setEnabled(false);
+        cmbPrioridad.setEnabled(false);
+        cmbEstado.setEnabled(false);
+        dtcFechaVencimiento.setEnabled(false);
+        cmbAsignar.setEnabled(false);
+        txtDescripcionProblema.setEnabled(false);
+        btn_crear.setEnabled(false);
+        btn_guardar.setEnabled(false);
+    }
+
+    private void limpiarCampos() {
+        cmbCliente.setSelectedIndex(0);
+        txtRuc.setText("");
+        cmbNumeroPedido.removeAllItems();
+        cmbNumeroPedido.addItem("--Seleccione--");
+        cmbTipoReclamo.setSelectedIndex(0);
+        cmbPrioridad.setSelectedIndex(0);
+        cmbEstado.setSelectedIndex(0);
+        dtcFechaVencimiento.setDate(null);
+        cmbAsignar.setSelectedIndex(0);
+        txtDescripcionProblema.setText("");
+        reclamoSeleccionado = null;
+        modoEdicion = false;
     }
 
     @SuppressWarnings("unchecked")
@@ -25,7 +247,7 @@ public class Form_Reclamos extends javax.swing.JPanel {
 
         lbl_titulo = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tbl_empleado = new javax.swing.JTable();
+        tbl_reclamo = new javax.swing.JTable();
         lbl_ingreseDni = new javax.swing.JLabel();
         btn_crear = new javax.swing.JButton();
         btn_nuevo = new javax.swing.JButton();
@@ -36,7 +258,7 @@ public class Form_Reclamos extends javax.swing.JPanel {
         cmbCliente = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
         txtRuc = new javax.swing.JTextField();
-        btn_nuevo1 = new javax.swing.JButton();
+        btn_buscar = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         cmbNumeroPedido = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
@@ -58,7 +280,7 @@ public class Form_Reclamos extends javax.swing.JPanel {
         lbl_titulo.setForeground(new java.awt.Color(255, 255, 255));
         lbl_titulo.setText("Gestión de Reclamos");
 
-        tbl_empleado.setModel(new javax.swing.table.DefaultTableModel(
+        tbl_reclamo.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -69,7 +291,7 @@ public class Form_Reclamos extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(tbl_empleado);
+        jScrollPane1.setViewportView(tbl_reclamo);
 
         lbl_ingreseDni.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
         lbl_ingreseDni.setForeground(new java.awt.Color(255, 255, 255));
@@ -135,14 +357,14 @@ public class Form_Reclamos extends javax.swing.JPanel {
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("RUC:");
 
-        btn_nuevo1.setBackground(new java.awt.Color(21, 21, 21));
-        btn_nuevo1.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
-        btn_nuevo1.setForeground(new java.awt.Color(255, 255, 255));
-        btn_nuevo1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/lupa.png"))); // NOI18N
-        btn_nuevo1.setText("Buscar");
-        btn_nuevo1.addActionListener(new java.awt.event.ActionListener() {
+        btn_buscar.setBackground(new java.awt.Color(21, 21, 21));
+        btn_buscar.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
+        btn_buscar.setForeground(new java.awt.Color(255, 255, 255));
+        btn_buscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/lupa.png"))); // NOI18N
+        btn_buscar.setText("Buscar");
+        btn_buscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_nuevo1ActionPerformed(evt);
+                btn_buscarActionPerformed(evt);
             }
         });
 
@@ -156,19 +378,19 @@ public class Form_Reclamos extends javax.swing.JPanel {
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Tipo de Reclamo:");
 
-        cmbTipoReclamo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbTipoReclamo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--Seleccione--", "Producto defectuoso", "Entrega tardia", "Facturacion", "Producto incorrecto", "Otros" }));
 
         jLabel5.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("Prioridad:");
 
-        cmbPrioridad.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbPrioridad.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--Seleccione--", "Alta", "Media", "Baja" }));
 
         jLabel6.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setText("Estado:");
 
-        cmbEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--Seleccione--", "Abierto", "En proceso", "Resuelto" }));
 
         jLabel7.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
@@ -222,7 +444,7 @@ public class Form_Reclamos extends javax.swing.JPanel {
                                         .addGap(18, 18, 18)
                                         .addComponent(txtRuc, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
-                                        .addComponent(btn_nuevo1)
+                                        .addComponent(btn_buscar)
                                         .addGap(18, 18, 18)
                                         .addComponent(jLabel3)
                                         .addGap(18, 18, 18)
@@ -263,7 +485,7 @@ public class Form_Reclamos extends javax.swing.JPanel {
                     .addComponent(cmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
                     .addComponent(txtRuc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_nuevo1)
+                    .addComponent(btn_buscar)
                     .addComponent(jLabel3)
                     .addComponent(cmbNumeroPedido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
@@ -308,36 +530,245 @@ public class Form_Reclamos extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_crearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_crearActionPerformed
-       
+        try {
+            if (validarCampos()) {
+                Reclamo reclamo = crearReclamoDesdeCampos();
+                facade.crearReclamo(reclamo);
+                JOptionPane.showMessageDialog(this, "Reclamo creado exitosamente");
+                limpiarCampos();
+                deshabilitarCampos();
+                cargarTablaReclamos();
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al crear reclamo: " + e.getMessage());
+        }
     }//GEN-LAST:event_btn_crearActionPerformed
 
     private void txt_ingreseDniActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_ingreseDniActionPerformed
-
+        buscarReclamosPorRuc();
     }//GEN-LAST:event_txt_ingreseDniActionPerformed
 
     private void btn_nuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_nuevoActionPerformed
-
+        limpiarCampos();
+        habilitarCampos();
+        modoEdicion = false;
+        btn_guardar.setEnabled(false);
     }//GEN-LAST:event_btn_nuevoActionPerformed
 
     private void btn_guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_guardarActionPerformed
-        
+        try {
+            if (reclamoSeleccionado != null && validarCampos()) {
+                // Verificar que el reclamo no esté cerrado
+                if ("Cerrado".equals(reclamoSeleccionado.getEstado())) {
+                    JOptionPane.showMessageDialog(this, "No se puede editar un reclamo cerrado", 
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                actualizarReclamoDesdeCampos();
+                facade.actualizarReclamo(reclamoSeleccionado);
+                JOptionPane.showMessageDialog(this, "Reclamo actualizado exitosamente");
+                limpiarCampos();
+                deshabilitarCampos();
+                cargarTablaReclamos();
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al actualizar reclamo: " + e.getMessage());
+        }
     }//GEN-LAST:event_btn_guardarActionPerformed
 
     private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
-        
+        try {
+            if (reclamoSeleccionado != null) {
+                // Verificar que el reclamo no esté ya cerrado
+                if ("Cerrado".equals(reclamoSeleccionado.getEstado())) {
+                    JOptionPane.showMessageDialog(this, "Este reclamo ya está cerrado", 
+                        "Información", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+                
+                int confirmacion = JOptionPane.showConfirmDialog(this, 
+                    "¿Está seguro de cerrar el reclamo?", "Confirmar", JOptionPane.YES_NO_OPTION);
+                if (confirmacion == JOptionPane.YES_OPTION) {
+                    facade.cerrarReclamo(reclamoSeleccionado.getReclamoId());
+                    JOptionPane.showMessageDialog(this, "Reclamo cerrado exitosamente");
+                    limpiarCampos();
+                    deshabilitarCampos();
+                    cargarTablaReclamos();
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Seleccione un reclamo para cerrar");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al cerrar reclamo: " + e.getMessage());
+        }
     }//GEN-LAST:event_btn_eliminarActionPerformed
 
-    private void btn_nuevo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_nuevo1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_nuevo1ActionPerformed
+    private void btn_buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarActionPerformed
+        buscarClientePorRuc();
+    }//GEN-LAST:event_btn_buscarActionPerformed
 
+    private void buscarClientePorRuc() {
+        try {
+            String ruc = txtRuc.getText().trim();
+            if (ruc.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Ingrese un RUC/DNI para buscar");
+                return;
+            }
+            
+            Cliente cliente = facade.buscarClientePorRuc(ruc);
+            if (cliente != null) {
+                // Seleccionar el cliente en el combo
+                for (int i = 0; i < cmbCliente.getItemCount(); i++) {
+                    String item = cmbCliente.getItemAt(i);
+                    if (item.equals(cliente.getNombreEmpresa() != null ? 
+                        cliente.getNombreEmpresa() : cliente.getRucDni())) {
+                        cmbCliente.setSelectedIndex(i);
+                        break;
+                    }
+                }
+                cargarPedidosConfirmados(cliente.getIdCliente());
+            } else {
+                JOptionPane.showMessageDialog(this, "Cliente no encontrado");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al buscar cliente: " + e.getMessage());
+        }
+    }
+
+    private void buscarReclamosPorRuc() {
+        try {
+            String ruc = txt_ingreseDni.getText().trim();
+            if (ruc.isEmpty()) {
+                cargarTablaReclamos();
+                return;
+            }
+            
+            List<Reclamo> reclamos = facade.obtenerReclamosPorRucDni(ruc);
+            String[] titulos = {"ID", "Cliente", "N° Pedido", "Tipo", "Prioridad", "Estado", "Asignado a", "Fecha Vencimiento"};
+            DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+            tbl_reclamo.setModel(modelo);
+            
+            for (Reclamo reclamo : reclamos) {
+                Object[] fila = new Object[8];
+                fila[0] = reclamo.getReclamoId();
+                fila[1] = reclamo.getCliente().getNombreEmpresa() != null ? 
+                    reclamo.getCliente().getNombreEmpresa() : reclamo.getCliente().getRucDni();
+                fila[2] = reclamo.getPedido() != null ? reclamo.getPedido().getNumeroPedido() : "N/A";
+                fila[3] = reclamo.getTipo();
+                fila[4] = reclamo.getPrioridad();
+                fila[5] = reclamo.getEstado();
+                fila[6] = reclamo.getUsuario().getNombre() + " " + reclamo.getUsuario().getApellido();
+                fila[7] = reclamo.getFechaVencimiento() != null ? reclamo.getFechaVencimiento().toString() : "N/A";
+                modelo.addRow(fila);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al buscar reclamos: " + e.getMessage());
+        }
+    }
+
+    private boolean validarCampos() {
+        if (cmbCliente.getSelectedIndex() <= 0) {
+            JOptionPane.showMessageDialog(this, "Seleccione un cliente");
+            return false;
+        }
+        if (cmbTipoReclamo.getSelectedIndex() <= 0) {
+            JOptionPane.showMessageDialog(this, "Seleccione un tipo de reclamo");
+            return false;
+        }
+        if (cmbPrioridad.getSelectedIndex() <= 0) {
+            JOptionPane.showMessageDialog(this, "Seleccione una prioridad");
+            return false;
+        }
+        if (cmbEstado.getSelectedIndex() <= 0) {
+            JOptionPane.showMessageDialog(this, "Seleccione un estado");
+            return false;
+        }
+        if (cmbAsignar.getSelectedIndex() <= 0) {
+            JOptionPane.showMessageDialog(this, "Seleccione un usuario para asignar");
+            return false;
+        }
+        if (txtDescripcionProblema.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Ingrese una descripción del problema");
+            return false;
+        }
+        return true;
+    }
+
+    private Reclamo crearReclamoDesdeCampos() {
+        Reclamo reclamo = new Reclamo();
+        
+        // Cliente
+        Cliente cliente = clientes.get(cmbCliente.getSelectedIndex() - 1);
+        reclamo.setCliente(cliente);
+        
+        // Pedido (opcional)
+        if (cmbNumeroPedido.getSelectedIndex() > 0) {
+            Pedido pedido = pedidosConfirmados.get(cmbNumeroPedido.getSelectedIndex() - 1);
+            reclamo.setPedido(pedido);
+        }
+        
+        // Usuario
+        Usuario usuario = usuariosSoporte.get(cmbAsignar.getSelectedIndex() - 1);
+        reclamo.setUsuario(usuario);
+        
+        // Otros campos
+        reclamo.setTipo(cmbTipoReclamo.getSelectedItem().toString());
+        reclamo.setPrioridad(cmbPrioridad.getSelectedItem().toString());
+        reclamo.setEstado(cmbEstado.getSelectedItem().toString());
+        reclamo.setDescripcion(txtDescripcionProblema.getText().trim());
+        
+        // Fecha de vencimiento
+        if (dtcFechaVencimiento.getDate() != null) {
+            reclamo.setFechaVencimiento(dtcFechaVencimiento.getDate().toInstant()
+                .atZone(java.time.ZoneId.systemDefault()).toLocalDate());
+        }
+        
+        return reclamo;
+    }
+
+    private void actualizarReclamoDesdeCampos() {
+        // Verificar que el reclamo no esté cerrado antes de actualizar
+        if ("Cerrado".equals(reclamoSeleccionado.getEstado())) {
+            throw new IllegalStateException("No se puede editar un reclamo cerrado");
+        }
+        
+        // Cliente
+        Cliente cliente = clientes.get(cmbCliente.getSelectedIndex() - 1);
+        reclamoSeleccionado.setCliente(cliente);
+        
+        // Pedido (opcional)
+        if (cmbNumeroPedido.getSelectedIndex() > 0) {
+            Pedido pedido = pedidosConfirmados.get(cmbNumeroPedido.getSelectedIndex() - 1);
+            reclamoSeleccionado.setPedido(pedido);
+        } else {
+            reclamoSeleccionado.setPedido(null);
+        }
+        
+        // Usuario
+        Usuario usuario = usuariosSoporte.get(cmbAsignar.getSelectedIndex() - 1);
+        reclamoSeleccionado.setUsuario(usuario);
+        
+        // Otros campos
+        reclamoSeleccionado.setTipo(cmbTipoReclamo.getSelectedItem().toString());
+        reclamoSeleccionado.setPrioridad(cmbPrioridad.getSelectedItem().toString());
+        reclamoSeleccionado.setEstado(cmbEstado.getSelectedItem().toString());
+        reclamoSeleccionado.setDescripcion(txtDescripcionProblema.getText().trim());
+        
+        // Fecha de vencimiento
+        if (dtcFechaVencimiento.getDate() != null) {
+            reclamoSeleccionado.setFechaVencimiento(dtcFechaVencimiento.getDate().toInstant()
+                .atZone(java.time.ZoneId.systemDefault()).toLocalDate());
+        } else {
+            reclamoSeleccionado.setFechaVencimiento(null);
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_buscar;
     private javax.swing.JButton btn_crear;
     private javax.swing.JButton btn_eliminar;
     private javax.swing.JButton btn_guardar;
     private javax.swing.JButton btn_nuevo;
-    private javax.swing.JButton btn_nuevo1;
     private javax.swing.JComboBox<String> cmbAsignar;
     private javax.swing.JComboBox<String> cmbCliente;
     private javax.swing.JComboBox<String> cmbEstado;
@@ -357,12 +788,9 @@ public class Form_Reclamos extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lbl_ingreseDni;
     private javax.swing.JLabel lbl_titulo;
-    private javax.swing.JTable tbl_empleado;
+    private javax.swing.JTable tbl_reclamo;
     private javax.swing.JTextField txtDescripcionProblema;
     private javax.swing.JTextField txtRuc;
     private javax.swing.JTextField txt_ingreseDni;
     // End of variables declaration//GEN-END:variables
-
-
-    
 }
