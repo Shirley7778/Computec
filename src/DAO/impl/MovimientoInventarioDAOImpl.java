@@ -3,7 +3,6 @@ package DAO.impl;
 import DAO.MovimientoInventarioDAO;
 import Modelo.MovimientoInventario;
 import ConexionBD.Conexion;
-import java.util.Collections;
 import java.util.List;
 
 public class MovimientoInventarioDAOImpl implements MovimientoInventarioDAO {
@@ -74,7 +73,21 @@ public class MovimientoInventarioDAOImpl implements MovimientoInventarioDAO {
 
     @Override
     public void update(MovimientoInventario m) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet.");
+        String sql = "UPDATE movimiento_inventario SET stock_id = ?, pedido_id = ?, tipo = ?, cantidad = ?, motivo = ?, referencia = ?, observaciones = ?, ubicacion_proveedor = ?, ubicacion_fisica_id = ? WHERE movimiento_id = ?";
+        try (java.sql.Connection cn = conexion.conectar();
+             java.sql.PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setLong(1, m.getStock() != null ? m.getStock().getStockId() : 0);
+            ps.setObject(2, m.getPedido() != null ? m.getPedido().getIdPedido() : null, java.sql.Types.BIGINT);
+            ps.setString(3, m.getTipo());
+            ps.setInt(4, m.getCantidad());
+            ps.setString(5, m.getMotivo());
+            ps.setString(6, m.getReferencia());
+            ps.setString(7, m.getObservaciones());
+            ps.setString(8, m.getUbicacionProveedor());
+            ps.setObject(9, m.getUbicacionFisica() != null ? m.getUbicacionFisica().getUbicacionId() : null, java.sql.Types.BIGINT);
+            ps.setLong(10, m.getMovimientoId());
+            ps.executeUpdate();
+        }
     }
 
     @Override

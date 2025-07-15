@@ -36,35 +36,33 @@
                       <Component id="btn_nuevo" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
                       <Component id="btn_guardar" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="53" max="-2" attributes="0"/>
-                      <Component id="btn_eliminar" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Component id="lbl_ingresarDNI" min="-2" max="-2" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                      <Component id="cmbTipoMovimiento" min="-2" pref="207" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="cmbTipoMovimieto" min="-2" pref="178" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="txtCantidad" min="-2" pref="151" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                       <Component id="jLabel4" min="-2" pref="95" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="cmbProducto" pref="267" max="32767" attributes="0"/>
+                      <Component id="cmbProducto" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="cmbMotivo" min="-2" pref="110" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                      <Component id="cmbMotivo" min="-2" pref="196" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="txtOrigen" min="-2" pref="210" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="txtOrigen" min="-2" pref="154" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="txtUbicacion" min="-2" pref="245" max="-2" attributes="0"/>
+                      <Component id="cmbUbicacionDestino" min="-2" pref="215" max="-2" attributes="0"/>
                   </Group>
                   <Component id="txt_buscar" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
@@ -75,6 +73,8 @@
                       <Component id="jLabel7" min="-2" pref="152" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="txtObservaciones" min="-2" pref="425" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="btn_crear" min="-2" pref="112" max="-2" attributes="0"/>
                   </Group>
                   <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
               </Group>
@@ -90,11 +90,11 @@
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="cmbTipoMovimiento" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="txtCantidad" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="cmbProducto" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="cmbTipoMovimieto" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -103,7 +103,7 @@
                   <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="txtOrigen" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="txtUbicacion" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="cmbUbicacionDestino" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
@@ -115,21 +115,23 @@
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
-                      <Component id="txtObservaciones" min="-2" pref="80" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="txtObservaciones" alignment="3" min="-2" pref="80" max="-2" attributes="0"/>
+                          <Component id="btn_crear" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace pref="7" max="32767" attributes="0"/>
               <Component id="lbl_ingresarDNI" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="txt_buscar" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="180" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="182" max="32767" attributes="0"/>
               <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="btn_nuevo" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btn_guardar" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="btn_eliminar" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
           </Group>
@@ -159,14 +161,12 @@
         <Property name="text" type="java.lang.String" value="Tipo de movimiento:"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JComboBox" name="cmbTipoMovimiento">
+    <Component class="javax.swing.JComboBox" name="cmbTipoMovimieto">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="4">
-            <StringItem index="0" value="Item 1"/>
-            <StringItem index="1" value="Item 2"/>
-            <StringItem index="2" value="Item 3"/>
-            <StringItem index="3" value="Item 4"/>
+          <StringArray count="2">
+            <StringItem index="0" value="--Selecionar--"/>
+            <StringItem index="1" value="Entrada"/>
           </StringArray>
         </Property>
       </Properties>
@@ -227,11 +227,9 @@
     <Component class="javax.swing.JComboBox" name="cmbMotivo">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="4">
-            <StringItem index="0" value="Item 1"/>
-            <StringItem index="1" value="Item 2"/>
-            <StringItem index="2" value="Item 3"/>
-            <StringItem index="3" value="Item 4"/>
+          <StringArray count="2">
+            <StringItem index="0" value="--Seleccionar--"/>
+            <StringItem index="1" value="Compra Producto"/>
           </StringArray>
         </Property>
       </Properties>
@@ -262,8 +260,6 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Ubicaci&#xf3;n destino:"/>
       </Properties>
-    </Component>
-    <Component class="javax.swing.JTextField" name="txtUbicacion">
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
@@ -347,26 +343,6 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_guardarActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btn_eliminar">
-      <Properties>
-        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="19" green="19" red="19" type="rgb"/>
-        </Property>
-        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Microsoft YaHei UI" size="18" style="1"/>
-        </Property>
-        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="ff" green="ff" red="ff" type="rgb"/>
-        </Property>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/Iconos/Eliminar.png"/>
-        </Property>
-        <Property name="text" type="java.lang.String" value="Eliminar"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_eliminarActionPerformed"/>
-      </Events>
-    </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">
       <AuxValues>
         <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
@@ -374,7 +350,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTable" name="tbl_usuario">
+        <Component class="javax.swing.JTable" name="tbl_movimiento">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="4" rowCount="4">
@@ -388,5 +364,40 @@
         </Component>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JComboBox" name="cmbUbicacionDestino">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="4">
+            <StringItem index="0" value="Item 1"/>
+            <StringItem index="1" value="Item 2"/>
+            <StringItem index="2" value="Item 3"/>
+            <StringItem index="3" value="Item 4"/>
+          </StringArray>
+        </Property>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JButton" name="btn_crear">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="19" green="19" red="19" type="rgb"/>
+        </Property>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Microsoft YaHei UI" size="18" style="1"/>
+        </Property>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+        </Property>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+          <Image iconType="3" name="/Iconos/Crear.png"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Crear"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_crearActionPerformed"/>
+      </Events>
+    </Component>
   </SubComponents>
 </Form>

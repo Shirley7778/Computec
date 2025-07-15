@@ -4,6 +4,8 @@
  */
 package Vista;
 
+
+
 /**
  *
  * @author SHIRLEY
@@ -22,6 +24,37 @@ public class Form_Clientes extends javax.swing.JPanel {
         configurarComboTipoEmpresa(); //  Configurar combo
         cargarClientesEnTabla(); //  Mostrar todos los clientes al iniciar
         configurarSeleccionTabla(); // Configurar listener para selección de tabla
+        txt_buscarRuc.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                String ruc = txt_buscarRuc.getText().trim();
+                if (ruc.isEmpty()) {
+                    cargarClientesEnTabla();
+                    return;
+                }
+                String[] titulos = {"ID", "RUC/DNI", "Empresa", "Tipo Empresa", "Ciudad", "Dirección", "Correo", "Teléfono", "Personal Contacto"};
+                javax.swing.table.DefaultTableModel modelo = new javax.swing.table.DefaultTableModel(null, titulos);
+                try {
+                    for (Modelo.Cliente c : DAO.DAOFactory.getClienteDAO().findAll()) {
+                        if (c.getRucDni().toLowerCase().contains(ruc.toLowerCase())) {
+                            Object[] fila = new Object[9];
+                            fila[0] = c.getIdCliente();
+                            fila[1] = c.getRucDni();
+                            fila[2] = c.getNombreEmpresa();
+                            fila[3] = c.getTipoEmpresa();
+                            fila[4] = c.getCiudad();
+                            fila[5] = c.getDireccion();
+                            fila[6] = c.getCorreo();
+                            fila[7] = c.getTelefonoContacto();
+                            fila[8] = c.getPersonalContacto();
+                            modelo.addRow(fila);
+                        }
+                    }
+                } catch (Exception e) {
+                    javax.swing.JOptionPane.showMessageDialog(Form_Clientes.this, "Error al buscar clientes: " + e.getMessage());
+                }
+                tbl_usuario.setModel(modelo);
+            }
+        });
     }
 
     /**
@@ -53,7 +86,7 @@ public class Form_Clientes extends javax.swing.JPanel {
         jLabel10 = new javax.swing.JLabel();
         txtCorreo = new javax.swing.JTextField();
         lbl_ingresarDNI = new javax.swing.JLabel();
-        txt_buscarDni = new javax.swing.JTextField();
+        txt_buscarRuc = new javax.swing.JTextField();
         btn_nuevo = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_usuario = new javax.swing.JTable();
@@ -124,11 +157,11 @@ public class Form_Clientes extends javax.swing.JPanel {
 
         lbl_ingresarDNI.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
         lbl_ingresarDNI.setForeground(new java.awt.Color(255, 255, 255));
-        lbl_ingresarDNI.setText("Buscar cliente:");
+        lbl_ingresarDNI.setText("Buscar cliente(RUC):");
 
-        txt_buscarDni.addActionListener(new java.awt.event.ActionListener() {
+        txt_buscarRuc.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_buscarDniActionPerformed(evt);
+                txt_buscarRucActionPerformed(evt);
             }
         });
 
@@ -227,7 +260,7 @@ public class Form_Clientes extends javax.swing.JPanel {
                                         .addGap(18, 18, 18)
                                         .addComponent(txtCodigoPostal, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(txt_buscarDni, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(txt_buscarRuc, javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1077, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel8)
@@ -274,7 +307,7 @@ public class Form_Clientes extends javax.swing.JPanel {
                 .addGap(35, 35, 35)
                 .addComponent(lbl_ingresarDNI)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txt_buscarDni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txt_buscarRuc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
                 .addGap(27, 27, 27)
@@ -386,7 +419,7 @@ public class Form_Clientes extends javax.swing.JPanel {
 
  
 
-    //  Evento btn_guardar
+    
     private void btn_guardarActionPerformed(java.awt.event.ActionEvent evt) {
         try {
             Servicio.SistemaFacade facade = new Servicio.SistemaFacade();
@@ -422,7 +455,7 @@ public class Form_Clientes extends javax.swing.JPanel {
         }
     }
 
-    // Actualizar cliente desde los campos del formulario
+    
     private void actualizarClienteDesdeCampos() {
         clienteSeleccionado.setRucDni(txtRuc.getText());
         clienteSeleccionado.setTipoEmpresa((String) cmbTipoEmpresa.getSelectedItem());
@@ -435,7 +468,7 @@ public class Form_Clientes extends javax.swing.JPanel {
         clienteSeleccionado.setPersonalContacto(txtPersonalContacto.getText());
     }
 
-    // Evento btn_eliminar
+    
     private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {
         int fila = tbl_usuario.getSelectedRow();
         if (fila >= 0) {
@@ -456,9 +489,9 @@ public class Form_Clientes extends javax.swing.JPanel {
         }
     }
 
-    //  Evento buscar por RUC/DNI
-    private void txt_buscarDniActionPerformed(java.awt.event.ActionEvent evt) {
-        String rucDni = txt_buscarDni.getText();
+    
+    private void txt_buscarRucActionPerformed(java.awt.event.ActionEvent evt) {
+        String rucDni = txt_buscarRuc.getText();
         if (!rucDni.trim().isEmpty()) {
             buscarClientePorRucDni(rucDni);
         } else {
@@ -489,7 +522,7 @@ public class Form_Clientes extends javax.swing.JPanel {
         });
     }
 
-    // Cargar cliente seleccionado en los campos
+    
     private void cargarClienteSeleccionado(int fila) {
         try {
             String rucDni = (String) tbl_usuario.getValueAt(fila, 0);
@@ -544,6 +577,6 @@ public class Form_Clientes extends javax.swing.JPanel {
     private javax.swing.JTextField txtPersonalContacto;
     private javax.swing.JTextField txtRuc;
     private javax.swing.JTextField txtTelefono;
-    private javax.swing.JTextField txt_buscarDni;
+    private javax.swing.JTextField txt_buscarRuc;
     // End of variables declaration//GEN-END:variables
 }

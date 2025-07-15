@@ -5,19 +5,14 @@
 package Vista;
 
 import ConexionBD.Conexion;
-import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
-import Controlador.AuthController;
-import Modelo.Usuario;
 import Servicio.SistemaFacade;
 import Modelo.Pedido;
 import java.util.List;
-import java.math.BigDecimal;
-import java.time.format.DateTimeFormatter;
+
 
 /**
  *
@@ -32,8 +27,8 @@ public class Form_Inicio extends javax.swing.JPanel {
     public Form_Inicio() {
         initComponents();
         facade = new SistemaFacade();
-        lbl_fecha.setText(fecha()); //establecer la fecha 
-        iniciarHora();//llamar al metodo para actualizar la hora 
+        lbl_fecha.setText(fecha());  
+        iniciarHora(); 
         mostrarInformacionDelDia();
         
         // Mostrar información del usuario actual si está autenticado
@@ -43,7 +38,7 @@ public class Form_Inicio extends javax.swing.JPanel {
                 lbl_bienvenido.setText("Bienvenido " + usuario.getNombre() + " " + usuario.getApellido());
             }
         } catch (Exception e) {
-            // Si no hay usuario autenticado, mantener el mensaje por defecto
+            
         }
     }
 
@@ -207,14 +202,10 @@ public class Form_Inicio extends javax.swing.JPanel {
             String[] titulos = {"N° Pedido", "Cliente", "Fecha", "Total", "Estado"};
             modelo = new DefaultTableModel(null, titulos);
             tbl_Inicio.setModel(modelo);
-            
-            // Obtener pedidos confirmados y pendientes
-            List<Pedido> pedidosConfirmadosYPendientes = facade.obtenerPedidosConfirmadosYPendientes();
-            
+            // Obtener pedidos confirmados y pendientes DEL DÍA ACTUAL
+            List<Pedido> pedidosConfirmadosYPendientes = facade.obtenerPedidosConfirmadosYPendientesDelDia();
             // Formato para la fecha
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-            
-            // Llenar la tabla con los pedidos confirmados y pendientes
+            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
             for (Pedido pedido : pedidosConfirmadosYPendientes) {
                 Object[] fila = new Object[5];
                 fila[0] = pedido.getNumeroPedido();
@@ -224,20 +215,16 @@ public class Form_Inicio extends javax.swing.JPanel {
                 fila[2] = pedido.getFecha().format(formatter);
                 fila[3] = "S/. " + pedido.getTotal().toString();
                 fila[4] = pedido.getEstado();
-                
                 modelo.addRow(fila);
             }
-            
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error al cargar los pedidos: " + e.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(null, "Error al cargar los pedidos: " + e.getMessage());
             System.out.println("Error al cargar los pedidos: " + e.getMessage());
         }
     }
     
-    //----------------------------------------------------
-    //-------------------------------    
+      
     //METODO PARA REFRESCAR LA INFORMACIÓN DEL DÍA
-    //-------------------------------
     public void refrescarInformacion() {
         mostrarInformacionDelDia();
     }

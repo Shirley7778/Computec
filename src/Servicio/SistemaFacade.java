@@ -11,14 +11,18 @@ import Modelo.Pedido;
 import Modelo.Producto;
 import Modelo.Stock;
 import Modelo.Reclamo;
+import Modelo.UbicacionFisica;
 import Modelo.Usuario;
 import java.util.List;
+import DAO.MovimientoInventarioDAO;
+import Modelo.MovimientoInventario;
 
 public class SistemaFacade {
     private final ProductoServicio productoServicio = new ProductoServicio();
     private final ClienteServicio clienteServicio = new ClienteServicio();
     private final PedidoServicio pedidoServicio = new PedidoServicio();
     private final ReclamoServicio reclamoServicio = new ReclamoServicio();
+    private final UbicacionFisicaServicio ubicacionFisicaServicio = new UbicacionFisicaServicio();
 
     public void registrarProducto(Producto p) throws Exception {
         productoServicio.registrar(p);
@@ -62,6 +66,13 @@ public class SistemaFacade {
         return pedidoServicio.obtenerPedidosConfirmadosYPendientes();
     }
     
+    public List<Pedido> obtenerPedidosConfirmadosYPendientesDelDia() throws Exception {
+        return pedidoServicio.obtenerPedidosConfirmadosYPendientesDelDia();
+    }
+
+    public List<Pedido> obtenerPedidosConfirmadosPorRangoFechas(java.time.LocalDate fechaIni, java.time.LocalDate fechaFin) throws Exception {
+        return pedidoServicio.obtenerPedidosConfirmadosPorRangoFechas(fechaIni, fechaFin);
+    }
 
 
     // Métodos para Reclamos
@@ -112,7 +123,52 @@ public class SistemaFacade {
 
     public void actualizarPedido(Pedido pedido) throws Exception {
         PedidoDAO pedidoDAO = DAOFactory.getPedidoDAO();
+        DetallePedidoDAO detalleDAO = DAOFactory.getDetallePedidoDAO();
+        StockDAO stockDAO = DAOFactory.getStockDAO();
+        MovimientoInventarioDAO movDAO = DAOFactory.getMovimientoInventarioDAO();
+        // Obtener el estado anterior del pedido
+        Pedido pedidoOriginal = null;
+        for (Pedido p : listarPedidos()) {
+            if (p.getIdPedido() == pedido.getIdPedido()) {
+                pedidoOriginal = p;
+                break;
+            }
+        }
+        String estadoAnterior = pedidoOriginal != null ? pedidoOriginal.getEstado() : null;
+        // Actualizar el pedido en la base de datos
         pedidoDAO.update(pedido);
+        // Si el estado cambió a Confirmado o Cancelado, crear movimientos
+        if (estadoAnterior != null && !estadoAnterior.equals(pedido.getEstado())) {
+            List<DetallePedido> detalles = detalleDAO.findByPedidoId(pedido.getIdPedido());
+            for (DetallePedido detalle : detalles) {
+                Stock stock = stockDAO.findById(detalle.getProducto().getProductoId());
+                MovimientoInventario mov = new MovimientoInventario();
+                mov.setPedido(pedido);
+                mov.setStock(stock);
+                mov.setReferencia("");
+                mov.setObservaciones("");
+                mov.setUbicacionProveedor("");
+                mov.setUbicacionFisica(null);
+                mov.setFecha(java.time.LocalDateTime.now());
+                if ("Confirmado".equalsIgnoreCase(pedido.getEstado())) {
+                    mov.setTipo("Salida");
+                    mov.setMotivo("Venta");
+                    mov.setCantidad(-detalle.getCantidad()); // Negativo
+                } else if ("Cancelado".equalsIgnoreCase(pedido.getEstado())) {
+                    mov.setTipo("Entrada");
+                    mov.setMotivo("Venta Cancelada");
+                    mov.setCantidad(detalle.getCantidad()); // Positivo
+                } else {
+                    continue;
+                }
+                movDAO.create(mov);
+                // Actualizar stock solo si es cancelado (devolver stock)
+                if ("Cancelado".equalsIgnoreCase(pedido.getEstado()) && stock != null) {
+                    stock.setCantidadActual(stock.getCantidadActual() + detalle.getCantidad());
+                    stockDAO.update(stock);
+                }
+            }
+        }
     }
 
     public String generarNumeroPedido() throws Exception {
@@ -167,5 +223,65 @@ public class SistemaFacade {
             }
         }
         return null;
+    }
+    
+    // Métodos para UbicacionFisica
+    public void crearUbicacion(UbicacionFisica ubicacion) throws Exception {
+        ubicacionFisicaServicio.crearUbicacion(ubicacion);
+    }
+    
+    public void actualizarUbicacion(UbicacionFisica ubicacion) throws Exception {
+        ubicacionFisicaServicio.actualizarUbicacion(ubicacion);
+    }
+    
+    public void eliminarUbicacion(long ubicacionId) throws Exception {
+        ubicacionFisicaServicio.eliminarUbicacion(ubicacionId);
+    }
+    
+    public UbicacionFisica buscarUbicacionPorId(long ubicacionId) throws Exception {
+        return ubicacionFisicaServicio.buscarUbicacionPorId(ubicacionId);
+    }
+    
+    public UbicacionFisica buscarUbicacionPorNombre(String nombre) throws Exception {
+        return ubicacionFisicaServicio.buscarUbicacionPorNombre(nombre);
+    }
+    
+    public List<UbicacionFisica> listarUbicaciones() throws Exception {
+        return ubicacionFisicaServicio.listarUbicaciones();
+    }
+
+    public void registrarProductoConStockYMovimiento(Producto producto, Stock stock, MovimientoInventario movimiento) throws Exception {
+        DAO.ProductoDAO productoDAO = DAO.DAOFactory.getProductoDAO();
+        // Si el producto no existe (id=0), crearlo
+        if (producto.getProductoId() == 0) {
+            productoDAO.create(producto);
+            // Recuperar el ID generado
+            if (productoDAO instanceof DAO.impl.ProductoDAOImpl) {
+                Producto creado = ((DAO.impl.ProductoDAOImpl)productoDAO).findByNombre(producto.getNombre());
+                producto.setProductoId(creado.getProductoId());
+            }
+        }
+        // Registrar stock
+        DAO.StockDAO stockDAO = DAO.DAOFactory.getStockDAO();
+        stock.setProducto(producto);
+        stockDAO.create(stock);
+        // Recuperar el stock_id generado
+        Stock stockCreado = stockDAO.findByProductoNombre(producto.getNombre());
+        stock.setStockId(stockCreado.getStockId());
+        // Registrar movimiento inventario
+        DAO.MovimientoInventarioDAO movDAO = DAO.DAOFactory.getMovimientoInventarioDAO();
+        movimiento.setStock(stock);
+        movDAO.create(movimiento);
+    }
+
+    public java.util.List<Modelo.Stock> listarStock() throws Exception {
+        DAO.StockDAO stockDAO = DAO.DAOFactory.getStockDAO();
+        return stockDAO.findAll();
+    }
+
+    public List<Pedido> obtenerPedidosConfirmadosPorRucDni(String rucDni) throws Exception {
+        Cliente cliente = clienteServicio.buscarPorRucDni(rucDni);
+        if (cliente == null) return java.util.Collections.emptyList();
+        return pedidoServicio.obtenerPedidosConfirmadosPorCliente(cliente.getIdCliente());
     }
 }

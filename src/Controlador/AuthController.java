@@ -3,7 +3,6 @@ package Controlador;
 import DAO.UsuarioDAO;
 import DAO.impl.UsuarioDAOImpl;
 import Modelo.Usuario;
-import Utilidades.EncriptacionUtil;
 import javax.swing.JOptionPane;
 
 public class AuthController {

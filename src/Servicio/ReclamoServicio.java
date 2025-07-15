@@ -3,9 +3,6 @@ package Servicio;
 import DAO.ReclamoDAO;
 import DAO.DAOFactory;
 import Modelo.Reclamo;
-import Modelo.Cliente;
-import Modelo.Pedido;
-import Modelo.Usuario;
 import java.util.List;
 
 /**

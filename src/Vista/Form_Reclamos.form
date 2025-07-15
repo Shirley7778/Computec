@@ -38,7 +38,7 @@
                           <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
                               <Component id="jScrollPane1" alignment="0" pref="1069" max="32767" attributes="0"/>
                               <Component id="lbl_ingreseDni" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="txt_ingreseDni" alignment="0" max="32767" attributes="0"/>
+                              <Component id="txt_buscar" alignment="0" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="1" max="-2" attributes="0">
@@ -153,7 +153,7 @@
                   </Group>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="txt_ingreseDni" min="-2" max="-2" attributes="0"/>
+              <Component id="txt_buscar" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" pref="208" max="-2" attributes="0"/>
               <EmptySpace pref="26" max="32767" attributes="0"/>
@@ -291,9 +291,9 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_eliminarActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JTextField" name="txt_ingreseDni">
+    <Component class="javax.swing.JTextField" name="txt_buscar">
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_ingreseDniActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_buscarActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">

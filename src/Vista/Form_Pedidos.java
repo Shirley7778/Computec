@@ -6,7 +6,6 @@ package Vista;
 
 import Servicio.SistemaFacade;
 import Modelo.Pedido;
-import Modelo.DetallePedido;
 import javax.swing.table.DefaultTableModel;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -20,7 +19,6 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Cell;
 import javax.swing.JFileChooser;
 import java.io.File;
-import java.time.format.DateTimeFormatter;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.io.font.constants.StandardFonts;
@@ -44,6 +42,33 @@ public class Form_Pedidos extends javax.swing.JPanel {
         cargarTablaPedidos();
         actualizarBotones();
         tbl_pedido.getSelectionModel().addListSelectionListener(e -> actualizarBotones());
+        txt_buscar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                String ruc = txt_buscar.getText().trim();
+                if (ruc.isEmpty()) {
+                    cargarTablaPedidos();
+                    return;
+                }
+                String[] titulos = {"N° Pedido", "Nombre Empresa", "RUC/DNI", "Tipo Empresa", "Fecha", "Subtotal", "IGV", "Total", "Estado"};
+                DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+                tbl_pedido.setModel(modelo);
+                for (Pedido p : pedidosGlobal) {
+                    if (p.getCliente().getRucDni().toLowerCase().contains(ruc.toLowerCase())) {
+                        Object[] fila = new Object[9];
+                        fila[0] = p.getNumeroPedido();
+                        fila[1] = p.getCliente().getNombreEmpresa();
+                        fila[2] = p.getCliente().getRucDni();
+                        fila[3] = p.getCliente().getTipoEmpresa();
+                        fila[4] = p.getFecha();
+                        fila[5] = p.getSubtotal();
+                        fila[6] = p.getIgv();
+                        fila[7] = p.getTotal();
+                        fila[8] = p.getEstado();
+                        modelo.addRow(fila);
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -62,7 +87,7 @@ public class Form_Pedidos extends javax.swing.JPanel {
         btn_eliminar = new javax.swing.JButton();
         jLabel9 = new javax.swing.JLabel();
         lbl_ingresarDNI = new javax.swing.JLabel();
-        txt_buscarDni = new javax.swing.JTextField();
+        txt_buscar = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_pedido = new javax.swing.JTable();
 
@@ -129,11 +154,11 @@ public class Form_Pedidos extends javax.swing.JPanel {
 
         lbl_ingresarDNI.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
         lbl_ingresarDNI.setForeground(new java.awt.Color(255, 255, 255));
-        lbl_ingresarDNI.setText("Buscar pedido:");
+        lbl_ingresarDNI.setText("Buscar pedido(RUC):");
 
-        txt_buscarDni.addActionListener(new java.awt.event.ActionListener() {
+        txt_buscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_buscarDniActionPerformed(evt);
+                txt_buscarActionPerformed(evt);
             }
         });
 
@@ -179,7 +204,7 @@ public class Form_Pedidos extends javax.swing.JPanel {
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1042, Short.MAX_VALUE)
-                            .addComponent(txt_buscarDni))))
+                            .addComponent(txt_buscar))))
                 .addGap(30, 30, 30))
         );
         layout.setVerticalGroup(
@@ -200,7 +225,7 @@ public class Form_Pedidos extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbl_ingresarDNI)
                 .addGap(18, 18, 18)
-                .addComponent(txt_buscarDni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txt_buscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27))
@@ -228,7 +253,7 @@ public class Form_Pedidos extends javax.swing.JPanel {
         Object valor = tbl_pedido.getValueAt(fila, 0);
         String numeroPedido = valor.toString();
         try {
-            // ✅ CORRECTO: Usando Facade en lugar de DAOFactory directamente
+            
             Pedido pedido = null;
             for (Pedido p : pedidosGlobal) {
                 if (p.getNumeroPedido() != null && p.getNumeroPedido().equals(numeroPedido)) {
@@ -324,7 +349,7 @@ public class Form_Pedidos extends javax.swing.JPanel {
         int confirm = JOptionPane.showConfirmDialog(this, "¿Está seguro de cancelar el pedido?", "Confirmar Cancelación", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             try {
-                // ✅ CORRECTO: Usando Facade en lugar de DAOFactory directamente
+                
                 Pedido pedido = null;
                 for (Pedido p : pedidosGlobal) {
                     if (p.getNumeroPedido() != null && p.getNumeroPedido().equals(numeroPedido)) {
@@ -335,15 +360,7 @@ public class Form_Pedidos extends javax.swing.JPanel {
                 if (pedido != null) {
                     // Obtener los detalles del pedido
                     List<Modelo.DetallePedido> detalles = facade.obtenerDetallesPorPedidoId(pedido.getIdPedido());
-                    // Devolver el stock para cada producto del pedido
-                    for (Modelo.DetallePedido detalle : detalles) {
-                        Modelo.Stock stock = facade.obtenerStockPorProductoId(detalle.getProducto().getProductoId());
-                        if (stock != null) {
-                            int nuevaCantidad = stock.getCantidadActual() + detalle.getCantidad();
-                            stock.setCantidadActual(nuevaCantidad);
-                            facade.actualizarStock(stock);
-                        }
-                    }
+                    
                     // Cambiar el estado del pedido a Cancelado
                     pedido.setEstado("Cancelado");
                     facade.actualizarPedido(pedido);
@@ -356,9 +373,9 @@ public class Form_Pedidos extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btn_eliminarActionPerformed
 
-    private void txt_buscarDniActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_buscarDniActionPerformed
+    private void txt_buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_buscarActionPerformed
 
-        String ruc = txt_buscarDni.getText().trim();
+        String ruc = txt_buscar.getText().trim();
         if (ruc.isEmpty()) {
             cargarTablaPedidos();
             return;
@@ -381,7 +398,7 @@ public class Form_Pedidos extends javax.swing.JPanel {
                 modelo.addRow(fila);
             }
         }
-    }//GEN-LAST:event_txt_buscarDniActionPerformed
+    }//GEN-LAST:event_txt_buscarActionPerformed
 
     private void btn_verActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_verActionPerformed
 
@@ -480,6 +497,6 @@ public class Form_Pedidos extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lbl_ingresarDNI;
     private javax.swing.JTable tbl_pedido;
-    private javax.swing.JTextField txt_buscarDni;
+    private javax.swing.JTextField txt_buscar;
     // End of variables declaration//GEN-END:variables
 }

@@ -18,9 +18,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import Servicio.StockServicio;
 import Servicio.InventarioObserver;
-import DAO.DAOFactory;
-import DAO.DetallePedidoDAO;
-import DAO.PedidoDAO;
 
 public class Form_Pedidos1 extends javax.swing.JPanel {
 
@@ -593,7 +590,7 @@ public class Form_Pedidos1 extends javax.swing.JPanel {
             return;
         }
         try {
-            // ✅ CORRECTO: Usando Facade en lugar de DAOFactory directamente
+            
             Pedido pedido = new Pedido();
             pedido.setCliente(clienteSeleccionado);
             pedido.setFecha(java.time.LocalDateTime.now());
@@ -621,9 +618,9 @@ public class Form_Pedidos1 extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Pedido creado exitosamente con número: " + numeroPedido);
             
             // Cerrar el diálogo
-            javax.swing.JFrame topFrame = (javax.swing.JFrame) javax.swing.SwingUtilities.getWindowAncestor(this);
-            if (topFrame != null) {
-                topFrame.dispose();
+            java.awt.Window window = javax.swing.SwingUtilities.getWindowAncestor(this);
+            if (window != null) {
+                window.dispose();
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error al crear pedido: " + e.getMessage());

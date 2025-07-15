@@ -4,7 +4,25 @@
  */
 package Vista;
 
-
+import Servicio.SistemaFacade;
+import Modelo.Pedido;
+import javax.swing.JOptionPane;
+import javax.swing.JFileChooser;
+import java.io.File;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
+import java.awt.Desktop;
 
 
 public class Form_Reporte extends javax.swing.JPanel {
@@ -25,7 +43,7 @@ public class Form_Reporte extends javax.swing.JPanel {
         lbl_titulo = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        txt_dniReporte = new javax.swing.JTextField();
+        txt_RucReporte = new javax.swing.JTextField();
         btn_reporte1 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
@@ -42,11 +60,11 @@ public class Form_Reporte extends javax.swing.JPanel {
         lbl_titulo.setText("Reportes de Asistencias");
 
         jPanel1.setBackground(new java.awt.Color(51, 51, 51));
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Por Empleado", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Microsoft YaHei UI", 1, 15), new java.awt.Color(255, 255, 255))); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Por Cliente o Empresa", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Microsoft YaHei UI", 1, 15), new java.awt.Color(255, 255, 255))); // NOI18N
 
         jLabel2.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("Ingrese DNI del empleado que desea realizar su reporte:");
+        jLabel2.setText("Ingrese DNI o RUC del cliente que quiere ver sus compras:");
 
         btn_reporte1.setBackground(new java.awt.Color(21, 21, 21));
         btn_reporte1.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
@@ -66,7 +84,7 @@ public class Form_Reporte extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txt_dniReporte, javax.swing.GroupLayout.PREFERRED_SIZE, 809, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_RucReporte, javax.swing.GroupLayout.PREFERRED_SIZE, 809, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(345, 345, 345)
@@ -84,7 +102,7 @@ public class Form_Reporte extends javax.swing.JPanel {
                         .addGap(29, 29, 29)
                         .addComponent(btn_reporte1)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_dniReporte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txt_RucReporte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(25, 25, 25))
         );
 
@@ -93,7 +111,7 @@ public class Form_Reporte extends javax.swing.JPanel {
 
         jLabel3.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setText("Ingrese el intervalo de fechas que desea realizar su reporte:");
+        jLabel3.setText("Ingrese el intervalo de fechas que desea realizar su reporte de ventas:");
 
         jLabel4.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
@@ -183,13 +201,92 @@ public class Form_Reporte extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btn_reporte1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_reporte1ActionPerformed
-       
-    }//GEN-LAST:event_btn_reporte1ActionPerformed
+    private final SistemaFacade facade = new SistemaFacade();
 
-    private void btn_reporte2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_reporte2ActionPerformed
-       
-    }//GEN-LAST:event_btn_reporte2ActionPerformed
+    private void btn_reporte1ActionPerformed(java.awt.event.ActionEvent evt) {
+        String ruc = txt_RucReporte.getText().trim();
+        if (ruc.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Ingrese el RUC/DNI del cliente.");
+            return;
+        }
+        try {
+            List<Pedido> pedidos = facade.obtenerPedidosConfirmadosPorRucDni(ruc);
+            if (pedidos.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No se encontraron ventas confirmadas para ese cliente.");
+                return;
+            }
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Guardar Reporte PDF");
+            fileChooser.setSelectedFile(new File("reporte_ventas_cliente_" + ruc + ".pdf"));
+            int userSelection = fileChooser.showSaveDialog(this);
+            if (userSelection != JFileChooser.APPROVE_OPTION) return;
+            File fileToSave = fileChooser.getSelectedFile();
+            generarReportePDF(pedidos, fileToSave, "Reporte de Ventas Confirmadas por Cliente");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al generar reporte: " + e.getMessage());
+        }
+    }
+
+    private void btn_reporte2ActionPerformed(java.awt.event.ActionEvent evt) {
+        java.util.Date fechaIni = txt_fechaIni.getDate();
+        java.util.Date fechaFin = txt_fechaFin.getDate();
+        if (fechaIni == null || fechaFin == null) {
+            JOptionPane.showMessageDialog(this, "Ingrese ambas fechas.");
+            return;
+        }
+        java.time.LocalDate fIni = new java.sql.Date(fechaIni.getTime()).toLocalDate();
+        java.time.LocalDate fFin = new java.sql.Date(fechaFin.getTime()).toLocalDate();
+        try {
+            List<Pedido> pedidos = facade.obtenerPedidosConfirmadosPorRangoFechas(fIni, fFin);
+            if (pedidos.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No se encontraron ventas confirmadas en ese rango de fechas.");
+                return;
+            }
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Guardar Reporte PDF");
+            fileChooser.setSelectedFile(new File("reporte_ventas_fechas.pdf"));
+            int userSelection = fileChooser.showSaveDialog(this);
+            if (userSelection != JFileChooser.APPROVE_OPTION) return;
+            File fileToSave = fileChooser.getSelectedFile();
+            generarReportePDF(pedidos, fileToSave, "Reporte de Ventas Confirmadas por Fechas");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al generar reporte: " + e.getMessage());
+        }
+    }
+
+    private void generarReportePDF(List<Pedido> pedidos, File file, String titulo) throws Exception {
+        PdfWriter writer = new PdfWriter(file.getAbsolutePath());
+        PdfDocument pdf = new PdfDocument(writer);
+        Document document = new Document(pdf);
+        PdfFont boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
+        PdfFont normalFont = PdfFontFactory.createFont(StandardFonts.HELVETICA);
+        document.add(new Paragraph(titulo).setFont(boldFont).setFontSize(18).setTextAlignment(TextAlignment.CENTER));
+        document.add(new Paragraph("Fecha de generación: " + java.time.LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))).setFont(normalFont));
+        Table table = new Table(UnitValue.createPercentArray(new float[]{10, 20, 20, 15, 15, 20})).useAllAvailableWidth();
+        table.addHeaderCell(new Cell().add(new Paragraph("N° Pedido").setFont(boldFont)));
+        table.addHeaderCell(new Cell().add(new Paragraph("Cliente").setFont(boldFont)));
+        table.addHeaderCell(new Cell().add(new Paragraph("Fecha").setFont(boldFont)));
+        table.addHeaderCell(new Cell().add(new Paragraph("Subtotal").setFont(boldFont)));
+        table.addHeaderCell(new Cell().add(new Paragraph("IGV").setFont(boldFont)));
+        table.addHeaderCell(new Cell().add(new Paragraph("Total").setFont(boldFont)));
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        for (Pedido p : pedidos) {
+            table.addCell(new Cell().add(new Paragraph(p.getNumeroPedido()).setFont(normalFont)));
+            String cliente = p.getCliente().getNombreEmpresa() != null ? p.getCliente().getNombreEmpresa() : p.getCliente().getRucDni();
+            table.addCell(new Cell().add(new Paragraph(cliente).setFont(normalFont)));
+            table.addCell(new Cell().add(new Paragraph(p.getFecha().toLocalDate().format(dtf)).setFont(normalFont)));
+            table.addCell(new Cell().add(new Paragraph(p.getSubtotal().toString()).setFont(normalFont)));
+            table.addCell(new Cell().add(new Paragraph(p.getIgv().toString()).setFont(normalFont)));
+            table.addCell(new Cell().add(new Paragraph(p.getTotal().toString()).setFont(normalFont)));
+        }
+        document.add(table);
+        document.close();
+        JOptionPane.showMessageDialog(this, "Reporte PDF generado correctamente.");
+        
+        if (Desktop.isDesktopSupported()) {
+            Desktop.getDesktop().open(file);
+        }
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -202,7 +299,7 @@ public class Form_Reporte extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lbl_titulo;
-    private javax.swing.JTextField txt_dniReporte;
+    private javax.swing.JTextField txt_RucReporte;
     private com.toedter.calendar.JDateChooser txt_fechaFin;
     private com.toedter.calendar.JDateChooser txt_fechaIni;
     // End of variables declaration//GEN-END:variables

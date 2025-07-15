@@ -3,7 +3,6 @@ package DAO.impl;
 import DAO.StockDAO;
 import Modelo.Stock;
 import ConexionBD.Conexion;
-import java.util.Collections;
 import java.util.List;
 import java.sql.Connection;
 import Modelo.Producto;
@@ -13,7 +12,19 @@ public class StockDAOImpl implements StockDAO {
 
     @Override
     public void create(Stock s) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet.");
+        String sql = "INSERT INTO stock (producto_id, cantidad_actual, minimo) VALUES (?, ?, ?)";
+        try (java.sql.Connection cn = conexion.conectar();
+             java.sql.PreparedStatement ps = cn.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
+            ps.setLong(1, s.getProducto().getProductoId());
+            ps.setInt(2, s.getCantidadActual());
+            ps.setInt(3, s.getMinimo());
+            ps.executeUpdate();
+            try (java.sql.ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    s.setStockId(rs.getLong(1));
+                }
+            }
+        }
     }
 
     @Override
@@ -38,7 +49,26 @@ public class StockDAOImpl implements StockDAO {
 
     @Override
     public List<Stock> findAll() throws Exception {
-        return Collections.emptyList();
+        String sql = "SELECT s.*, p.nombre, p.categoria, p.precio FROM stock s INNER JOIN productos p ON s.producto_id = p.producto_id";
+        List<Stock> lista = new java.util.ArrayList<>();
+        try (java.sql.Connection cn = conexion.conectar();
+             java.sql.PreparedStatement ps = cn.prepareStatement(sql);
+             java.sql.ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Modelo.Producto producto = new Modelo.Producto();
+                producto.setProductoId(rs.getLong("producto_id"));
+                producto.setNombre(rs.getString("nombre"));
+                producto.setCategoria(rs.getString("categoria"));
+                producto.setPrecio(rs.getBigDecimal("precio"));
+                Modelo.Stock stock = new Modelo.Stock();
+                stock.setStockId(rs.getLong("stock_id"));
+                stock.setProducto(producto);
+                stock.setCantidadActual(rs.getInt("cantidad_actual"));
+                stock.setMinimo(rs.getInt("minimo"));
+                lista.add(stock);
+            }
+        }
+        return lista;
     }
 
     @Override

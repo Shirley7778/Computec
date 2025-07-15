@@ -53,7 +53,7 @@
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="jScrollPane1" pref="1042" max="32767" attributes="0"/>
-                          <Component id="txt_buscarDni" max="32767" attributes="0"/>
+                          <Component id="txt_buscar" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -81,7 +81,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="lbl_ingresarDNI" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="txt_buscarDni" min="-2" max="-2" attributes="0"/>
+              <Component id="txt_buscar" min="-2" max="-2" attributes="0"/>
               <EmptySpace pref="30" max="32767" attributes="0"/>
               <Component id="jScrollPane1" min="-2" pref="310" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
@@ -209,12 +209,12 @@
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Buscar pedido:"/>
+        <Property name="text" type="java.lang.String" value="Buscar pedido(RUC):"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="txt_buscarDni">
+    <Component class="javax.swing.JTextField" name="txt_buscar">
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_buscarDniActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_buscarActionPerformed"/>
       </Events>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">

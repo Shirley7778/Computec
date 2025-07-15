@@ -8,8 +8,6 @@ import Modelo.Usuario;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import java.util.List;
-import java.util.ArrayList;
-import java.time.LocalDate;
 import java.util.Date;
 
 public class Form_Reclamos extends javax.swing.JPanel {
@@ -28,6 +26,30 @@ public class Form_Reclamos extends javax.swing.JPanel {
         inicializarFormulario();
         cargarTablaReclamos();
         deshabilitarCampos();
+        txt_buscar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                String texto = txt_buscar.getText().trim().toLowerCase();
+                String[] titulos = {"ID", "Cliente", "N° Pedido", "Tipo", "Prioridad", "Estado", "Asignado a", "Fecha Vencimiento"};
+                DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+                for (Reclamo reclamo : reclamosGlobal) {
+                    String cliente = reclamo.getCliente().getNombreEmpresa() != null ? reclamo.getCliente().getNombreEmpresa() : reclamo.getCliente().getRucDni();
+                    String numeroPedido = reclamo.getPedido() != null ? reclamo.getPedido().getNumeroPedido() : "N/A";
+                    if (cliente.toLowerCase().contains(texto) || numeroPedido.toLowerCase().contains(texto) || reclamo.getEstado().toLowerCase().contains(texto)) {
+                        Object[] fila = new Object[8];
+                        fila[0] = reclamo.getReclamoId();
+                        fila[1] = cliente;
+                        fila[2] = numeroPedido;
+                        fila[3] = reclamo.getTipo();
+                        fila[4] = reclamo.getPrioridad();
+                        fila[5] = reclamo.getEstado();
+                        fila[6] = reclamo.getUsuario().getNombre() + " " + reclamo.getUsuario().getApellido();
+                        fila[7] = reclamo.getFechaVencimiento() != null ? reclamo.getFechaVencimiento().toString() : "N/A";
+                        modelo.addRow(fila);
+                    }
+                }
+                tbl_reclamo.setModel(modelo);
+            }
+        });
     }
 
     private void inicializarFormulario() {
@@ -253,7 +275,7 @@ public class Form_Reclamos extends javax.swing.JPanel {
         btn_nuevo = new javax.swing.JButton();
         btn_guardar = new javax.swing.JButton();
         btn_eliminar = new javax.swing.JButton();
-        txt_ingreseDni = new javax.swing.JTextField();
+        txt_buscar = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         cmbCliente = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
@@ -341,9 +363,9 @@ public class Form_Reclamos extends javax.swing.JPanel {
             }
         });
 
-        txt_ingreseDni.addActionListener(new java.awt.event.ActionListener() {
+        txt_buscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_ingreseDniActionPerformed(evt);
+                txt_buscarActionPerformed(evt);
             }
         });
 
@@ -426,7 +448,7 @@ public class Form_Reclamos extends javax.swing.JPanel {
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1069, Short.MAX_VALUE)
                                 .addComponent(lbl_ingreseDni, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(txt_ingreseDni, javax.swing.GroupLayout.Alignment.LEADING))
+                                .addComponent(txt_buscar, javax.swing.GroupLayout.Alignment.LEADING))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
@@ -517,7 +539,7 @@ public class Form_Reclamos extends javax.swing.JPanel {
                         .addGap(35, 35, 35)
                         .addComponent(txtDescripcionProblema, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addComponent(txt_ingreseDni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txt_buscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(26, 26, 26)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
@@ -544,9 +566,9 @@ public class Form_Reclamos extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btn_crearActionPerformed
 
-    private void txt_ingreseDniActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_ingreseDniActionPerformed
+    private void txt_buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_buscarActionPerformed
         buscarReclamosPorRuc();
-    }//GEN-LAST:event_txt_ingreseDniActionPerformed
+    }//GEN-LAST:event_txt_buscarActionPerformed
 
     private void btn_nuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_nuevoActionPerformed
         limpiarCampos();
@@ -637,7 +659,7 @@ public class Form_Reclamos extends javax.swing.JPanel {
 
     private void buscarReclamosPorRuc() {
         try {
-            String ruc = txt_ingreseDni.getText().trim();
+            String ruc = txt_buscar.getText().trim();
             if (ruc.isEmpty()) {
                 cargarTablaReclamos();
                 return;
@@ -791,6 +813,6 @@ public class Form_Reclamos extends javax.swing.JPanel {
     private javax.swing.JTable tbl_reclamo;
     private javax.swing.JTextField txtDescripcionProblema;
     private javax.swing.JTextField txtRuc;
-    private javax.swing.JTextField txt_ingreseDni;
+    private javax.swing.JTextField txt_buscar;
     // End of variables declaration//GEN-END:variables
 }

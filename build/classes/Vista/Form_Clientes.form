@@ -77,7 +77,7 @@
                               </Group>
                           </Group>
                           <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="txt_buscarDni" alignment="0" max="32767" attributes="0"/>
+                              <Component id="txt_buscarRuc" alignment="0" max="32767" attributes="0"/>
                               <Component id="jScrollPane1" alignment="0" pref="1077" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
@@ -135,7 +135,7 @@
               <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
               <Component id="lbl_ingresarDNI" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="txt_buscarDni" min="-2" max="-2" attributes="0"/>
+              <Component id="txt_buscarRuc" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
               <Component id="jScrollPane1" pref="142" max="32767" attributes="0"/>
               <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
@@ -308,12 +308,12 @@
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Buscar cliente:"/>
+        <Property name="text" type="java.lang.String" value="Buscar cliente(RUC):"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="txt_buscarDni">
+    <Component class="javax.swing.JTextField" name="txt_buscarRuc">
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_buscarDniActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_buscarRucActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btn_nuevo">

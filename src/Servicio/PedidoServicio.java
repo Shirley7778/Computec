@@ -34,4 +34,12 @@ public class PedidoServicio {
             .filter(pedido -> "Confirmado".equals(pedido.getEstado()) || "Pendiente".equals(pedido.getEstado()))
             .collect(java.util.stream.Collectors.toList());
     }
+    
+    public List<Pedido> obtenerPedidosConfirmadosYPendientesDelDia() throws Exception {
+        return pedidoDAO.obtenerPedidosConfirmadosYPendientesDelDia();
+    }
+    
+    public List<Pedido> obtenerPedidosConfirmadosPorRangoFechas(java.time.LocalDate fechaIni, java.time.LocalDate fechaFin) throws Exception {
+        return pedidoDAO.obtenerPedidosConfirmadosPorRangoFechas(fechaIni, fechaFin);
+    }
 } 

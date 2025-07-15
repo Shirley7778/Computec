@@ -6,7 +6,6 @@ import Modelo.Permiso;
 import ConexionBD.Conexion;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class UsuarioDAOImpl implements UsuarioDAO {
@@ -173,7 +172,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
             usuario.setUltimaVez(null);
         }
         
-        // Crear objeto Permiso
+        
         Permiso permiso = new Permiso();
         permiso.setIdPermiso(rs.getLong("id_permiso"));
         permiso.setRol(rs.getString("rol"));

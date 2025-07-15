@@ -8,7 +8,6 @@ import Modelo.Usuario;
 import ConexionBD.Conexion;
 import java.sql.*;
 import java.sql.Types;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -219,7 +218,7 @@ public class ReclamoDAOImpl implements ReclamoDAO {
         usuario.setDni(rs.getString("dni"));
         usuario.setTelefono(rs.getString("telefono"));
         usuario.setContrasena(rs.getString("contrasena"));
-        // permiso se puede cargar por separado si es necesario
+        
 
         Reclamo reclamo = new Reclamo();
         reclamo.setReclamoId(rs.getLong("reclamo_id"));

@@ -72,7 +72,7 @@
         </Property>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Por Empleado">
+            <TitledBorder title="Por Cliente o Empresa">
               <Font PropertyName="font" name="Microsoft YaHei UI" size="15" style="1"/>
               <Color PropertyName="color" blue="ff" green="ff" red="ff" type="rgb"/>
             </TitledBorder>
@@ -86,7 +86,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="txt_dniReporte" min="-2" pref="809" max="-2" attributes="0"/>
+                      <Component id="txt_RucReporte" min="-2" pref="809" max="-2" attributes="0"/>
                       <Group type="102" attributes="0">
                           <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="345" max="-2" attributes="0"/>
@@ -111,7 +111,7 @@
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="txt_dniReporte" min="-2" max="-2" attributes="0"/>
+                  <Component id="txt_RucReporte" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -126,10 +126,10 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Ingrese DNI del empleado que desea realizar su reporte:"/>
+            <Property name="text" type="java.lang.String" value="Ingrese DNI o RUC del cliente que quiere ver sus compras:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="txt_dniReporte">
+        <Component class="javax.swing.JTextField" name="txt_RucReporte">
         </Component>
         <Component class="javax.swing.JButton" name="btn_reporte1">
           <Properties>
@@ -227,7 +227,7 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Ingrese el intervalo de fechas que desea realizar su reporte:"/>
+            <Property name="text" type="java.lang.String" value="Ingrese el intervalo de fechas que desea realizar su reporte de ventas:"/>
           </Properties>
         </Component>
         <Component class="com.toedter.calendar.JDateChooser" name="txt_fechaIni">

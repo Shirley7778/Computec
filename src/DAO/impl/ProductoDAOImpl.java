@@ -83,4 +83,22 @@ public class ProductoDAOImpl implements ProductoDAO {
             ps.executeUpdate();
         }
     }
+
+    public Producto findByNombre(String nombre) throws Exception {
+        String sql = "SELECT * FROM productos WHERE nombre=?";
+        try (Connection cn = conexion.conectar();
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setString(1, nombre);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Producto p = new Producto();
+                p.setProductoId(rs.getLong("producto_id"));
+                p.setNombre(rs.getString("nombre"));
+                p.setCategoria(rs.getString("categoria"));
+                p.setPrecio(rs.getBigDecimal("precio"));
+                return p;
+            }
+        }
+        return null;
+    }
 }
